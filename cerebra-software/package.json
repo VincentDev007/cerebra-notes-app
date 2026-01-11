@@ -1,19 +1,43 @@
 {
-  "name": "urbrain-software",
+  "name": "cerebra-software",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "dist-electron/main.js",
+"scripts": {
+  "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
+  "dev:vite": "cd frontend && vite",
+  "dev:electron": "tsc -p electron/tsconfig.json && electron .",
+  
+  "build": "npm run build:frontend && npm run build:electron && npm run build:backend",
+  "build:frontend": "cd frontend && vite build",
+  "build:electron": "tsc -p electron/tsconfig.json",
+  "build:backend": "tsc -p backend/tsconfig.json",
+  
+  "package:win": "npm run build && electron-builder --win",
+  "package:mac": "npm run build && electron-builder --mac",
+  "package:linux": "npm run build && electron-builder --linux"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "electron": "^38.2.1"
-  },
   "dependencies": {
-    "sql.js": "^1.13.0"
+    "better-sqlite3": "^12.5.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
+    "electron": "^39.2.7",
+    "electron-builder": "^26.4.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0"
   }
 }

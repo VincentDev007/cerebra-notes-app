@@ -1,5 +1,10 @@
-node_modules/
-data/
-*.log
+# Ignore the old vanilla version (v1)
+vanilla-cerebra-software/
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
 .DS_Store
-dist/
+Thumbs.db

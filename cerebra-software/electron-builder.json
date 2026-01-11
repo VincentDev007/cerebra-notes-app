@@ -1,0 +1,26 @@
+{
+  "appId": "com.cerebra.app",
+  "productName": "Cerebra",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist-frontend/**/*",
+    "dist-electron/**/*",
+    "dist-backend/**/*",
+    "package.json"
+  ],
+  "win": {
+    "target": "nsis",
+    "icon": "frontend/public/icon.ico"
+  },
+  "mac": {
+    "target": "dmg",
+    "icon": "frontend/public/icon.icns",
+    "category": "public.app-category.productivity"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
+  }
+}
