@@ -2,16 +2,16 @@
   "name": "cerebra-software",
   "version": "2.0.0",
   "description": "",
-  "main": "dist-electron/main.js",
+  "main": "dist/electron/electron/main.js",
 "scripts": {
-  "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
+  "dev": "npm run build:backend && concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
   "dev:vite": "cd frontend && vite",
   "dev:electron": "tsc -p electron/tsconfig.json && electron .",
   
   "build": "npm run build:frontend && npm run build:electron && npm run build:backend",
   "build:frontend": "cd frontend && vite build",
-  "build:electron": "tsc -p electron/tsconfig.json",
-  "build:backend": "tsc -p backend/tsconfig.json",
+  "build:electron": "tsc -p electron/tsconfig.json && cp backend/database/schema.sql dist/electron/backend/database/",
+  "build:backend": "tsc -p backend/tsconfig.json && mkdir -p dist/backend/database && cp backend/database/schema.sql dist/backend/database/",
   
   "package:win": "npm run build && electron-builder --win",
   "package:mac": "npm run build && electron-builder --mac",

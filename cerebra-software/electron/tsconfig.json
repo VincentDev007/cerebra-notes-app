@@ -3,7 +3,7 @@
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "node",
-    "outDir": "../dist-electron",
+    "outDir": "../dist/electron",
     "noEmit": false,
     "allowImportingTsExtensions": false
   },

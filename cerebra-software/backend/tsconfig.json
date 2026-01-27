@@ -3,7 +3,8 @@
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "node",
-    "outDir": "../dist-backend",
+    "outDir": "../dist/backend",
+    "rootDir": ".",
     "noEmit": false,
     "allowImportingTsExtensions": false
   },

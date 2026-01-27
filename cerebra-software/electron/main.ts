@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
+import { initializeDatabase } from '../backend/database/init';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -21,7 +22,7 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   } else {
     // Production: load built files
-    mainWindow.loadFile(path.join(__dirname, '../dist-frontend/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../dist/frontend/index.html'));
   }
 
   mainWindow.on('closed', () => {
@@ -29,7 +30,12 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  // Initialize database on app startup
+  initializeDatabase();
+  
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

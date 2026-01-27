@@ -2,9 +2,7 @@
 node_modules/
 
 # Build outputs
-dist-electron/
-dist-frontend/
-dist-backend/
+dist/
 release/
 
 # Environment files
