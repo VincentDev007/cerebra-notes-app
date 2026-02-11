@@ -1,4 +1,4 @@
-interface Folder {
+export interface Folder {
   id: number;
   name: string;
   parent_id: number | null;
@@ -6,7 +6,7 @@ interface Folder {
   modified_at: string;
 }
 
-interface Note {
+export interface Note {
   id: number;
   title: string;
   content: string;
@@ -15,7 +15,7 @@ interface Note {
   modified_at: string;
 }
 
-interface StickyNote {
+export interface StickyNote {
   id: number;
   title: string;
   content: string;
@@ -23,7 +23,7 @@ interface StickyNote {
   modified_at: string;
 }
 
-interface ElectronAPI {
+export interface ElectronAPI {
   folders: {
     getAll: () => Promise<Folder[]>;
     create: (input: { name: string; parent_id?: number | null }) => Promise<Folder>;
