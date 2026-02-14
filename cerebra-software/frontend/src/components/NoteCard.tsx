@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Note } from '../types/electron';
 
 interface Props {
@@ -28,11 +28,11 @@ export default function NoteCard({ note, onClick, onDelete }: Props) {
     <div
       className="relative rounded-xl p-5 cursor-pointer flex flex-col gap-2 transition-all duration-200"
       style={{
-        background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-        borderLeft: '4px solid #3498db',
+        background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
+        borderLeft: '4px solid var(--note-border)',
         boxShadow: hovered
-          ? '0 8px 20px rgba(52,152,219,0.2)'
-          : '0 2px 8px rgba(0,0,0,0.08)',
+          ? 'var(--note-shadow-hover)'
+          : 'var(--card-shadow)',
         transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
       }}
       onClick={onClick}
@@ -42,7 +42,7 @@ export default function NoteCard({ note, onClick, onDelete }: Props) {
       {/* Delete button */}
       <button
         className="absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center text-white text-sm transition-all duration-200"
-        style={{ background: 'rgba(231,76,60,0.9)', opacity: hovered ? 1 : 0 }}
+        style={{ background: 'var(--btn-delete-bg)', opacity: hovered ? 1 : 0 }}
         onClick={(e) => { e.stopPropagation(); onDelete(); }}
         title="Delete note"
       >
@@ -53,7 +53,7 @@ export default function NoteCard({ note, onClick, onDelete }: Props) {
       <div className="text-5xl text-center">📝</div>
 
       {/* Title */}
-      <div className="text-base font-semibold text-center break-words w-full" style={{ color: '#2c3e50' }}>
+      <div className="text-base font-semibold text-center break-words w-full" style={{ color: 'var(--text-primary)' }}>
         {note.title}
       </div>
 
@@ -61,7 +61,7 @@ export default function NoteCard({ note, onClick, onDelete }: Props) {
       <div
         className="text-sm"
         style={{
-          color: '#7f8c8d',
+          color: 'var(--text-secondary)',
           lineHeight: '1.5',
           display: '-webkit-box',
           WebkitLineClamp: 2,
@@ -74,7 +74,7 @@ export default function NoteCard({ note, onClick, onDelete }: Props) {
       </div>
 
       {/* Date */}
-      <div className="text-xs uppercase tracking-wide font-semibold" style={{ color: '#95a5a6' }}>
+      <div className="text-xs uppercase tracking-wide font-semibold" style={{ color: 'var(--text-light)' }}>
         Created {formatDate(note.created_at)}
       </div>
     </div>

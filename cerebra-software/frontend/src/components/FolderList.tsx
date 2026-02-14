@@ -1,20 +1,20 @@
-import React from 'react';
 import type { Folder } from '../types/electron';
 import FolderCard from './FolderCard';
 
 interface Props {
   folders: Folder[];
   onSelect: (folder: Folder) => void;
+  onEdit: (folder: Folder) => void;
   onDelete: (id: number) => void;
 }
 
-export default function FolderList({ folders, onSelect, onDelete }: Props) {
+export default function FolderList({ folders, onSelect, onEdit, onDelete }: Props) {
   if (folders.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <div className="text-6xl mb-5 opacity-50">📁</div>
-        <h3 className="text-xl font-semibold mb-2" style={{ color: '#7f8c8d' }}>No folders yet</h3>
-        <p className="text-sm" style={{ color: '#95a5a6' }}>Create your first folder to organize your notes</p>
+        <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>No folders yet</h3>
+        <p className="text-sm" style={{ color: 'var(--text-light)' }}>Create your first folder to organize your notes</p>
       </div>
     );
   }
@@ -29,6 +29,7 @@ export default function FolderList({ folders, onSelect, onDelete }: Props) {
           key={folder.id}
           folder={folder}
           onClick={() => onSelect(folder)}
+          onEdit={() => onEdit(folder)}
           onDelete={() => onDelete(folder.id)}
         />
       ))}
