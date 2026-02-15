@@ -5,18 +5,21 @@ import {
   createFolder,
   updateFolder,
   deleteFolder,
+  getFolderItemCounts,
 } from '../services/folderService';
 
 export function useFolders() {
   const [folders, setFolders] = useState<Folder[]>([]);
+  const [itemCounts, setItemCounts] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchFolders = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await getFolders();
+      const [data, counts] = await Promise.all([getFolders(), getFolderItemCounts()]);
       setFolders(data);
+      setItemCounts(counts);
       setError(null);
     } catch (err) {
       setError('Failed to load folders');
@@ -44,5 +47,5 @@ export function useFolders() {
     await fetchFolders();
   };
 
-  return { folders, loading, error, create, update, remove };
+  return { folders, itemCounts, loading, error, create, update, remove };
 }

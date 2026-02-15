@@ -19,14 +19,18 @@ import SettingsPanel from './components/SettingsPanel';
 import ViewStickyNoteModal from './components/ViewStickyNoteModal';
 
 export default function App() {
-  const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
+  // Persistent tabs state
+  const [openTabs, setOpenTabs] = useState<(Folder | null)[]>([null]);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const selectedFolder = openTabs[activeTabIndex] ?? null;
 
-  const { folders, create: createFolder, update: updateFolder, remove: removeFolder } = useFolders();
-  const { notes, create: createNote, update: updateNote, remove: removeNote } = useNotes(selectedFolder?.id ?? null);
+  const { folders, itemCounts, loading: foldersLoading, error: foldersError, create: createFolder, update: updateFolder, remove: removeFolder } = useFolders();
+  const { notes, loading: notesLoading, error: notesError, create: createNote, update: updateNote, remove: removeNote } = useNotes(selectedFolder?.id ?? null);
   const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [createFolderParentId, setCreateFolderParentId] = useState<number | null>(null);
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
   const [deletingFolderId, setDeletingFolderId] = useState<number | null>(null);
+  const [deletingNoteId, setDeletingNoteId] = useState<number | null>(null);
   const [selectedNoteId, setSelectedNoteId] = useState<number | null>(null);
   const [showCreateNote, setShowCreateNote] = useState(false);
   const { stickyNotes, create: createStickyNote, remove: removeStickyNote } = useStickyNotes();
@@ -36,7 +40,8 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const { settings, updateSetting } = useSettings();
 
-  // Theme state — persisted in settings
+  // Settings-derived flags
+  const confirmDelete = settings.confirmDelete !== 'false';
   const theme = settings.theme === 'dark' ? 'dark' : 'light';
 
   // Apply theme to document
@@ -59,6 +64,51 @@ export default function App() {
   useEffect(() => {
     setSelectedNoteId(null);
   }, [selectedFolder?.id]);
+
+  // Remove tabs for deleted folders
+  useEffect(() => {
+    const folderIds = new Set(folders.map(f => f.id));
+    setOpenTabs(prev => {
+      if (!prev.some(t => t !== null && !folderIds.has(t.id))) return prev;
+      const cleaned = prev.filter(t => t === null || folderIds.has(t.id));
+      return cleaned.length > 0 ? cleaned : [null];
+    });
+  }, [folders]);
+
+  // Keep activeTabIndex in bounds
+  useEffect(() => {
+    if (activeTabIndex >= openTabs.length) {
+      setActiveTabIndex(Math.max(0, openTabs.length - 1));
+    }
+  }, [openTabs.length, activeTabIndex]);
+
+  // Tab navigation helpers
+  const navigateTo = (folder: Folder | null) => {
+    if (folder === null) {
+      const homeIndex = openTabs.indexOf(null);
+      if (homeIndex >= 0) setActiveTabIndex(homeIndex);
+      return;
+    }
+    const existingIndex = openTabs.findIndex(t => t !== null && t.id === folder.id);
+    if (existingIndex >= 0) {
+      setActiveTabIndex(existingIndex);
+    } else {
+      const newIndex = openTabs.length;
+      setOpenTabs(prev => [...prev, folder]);
+      setActiveTabIndex(newIndex);
+    }
+  };
+
+  const closeTab = (index: number) => {
+    if (openTabs.length <= 1) return;
+    const wasActive = activeTabIndex === index;
+    setOpenTabs(prev => prev.filter((_, i) => i !== index));
+    if (wasActive) {
+      setActiveTabIndex(Math.max(0, index - 1));
+    } else if (activeTabIndex > index) {
+      setActiveTabIndex(activeTabIndex - 1);
+    }
+  };
 
   // Apply font-size and animations settings to the body element
   useEffect(() => {
@@ -138,7 +188,7 @@ export default function App() {
                     color: 'var(--text-sidebar)',
                     background: selectedFolder?.id === folder.id ? 'var(--divider-color)' : 'transparent'
                   }}
-                  onClick={() => setSelectedFolder(folder)}
+                  onClick={() => navigateTo(folder)}
                 >
                   📁 {folder.name}
                 </div>
@@ -169,6 +219,7 @@ export default function App() {
                   key={sticky.id}
                   className="px-3 py-2 rounded-md text-sm cursor-pointer transition-all hover:translate-x-1"
                   style={{ color: 'var(--text-sidebar)' }}
+                  onClick={() => setViewingStickyNoteId(sticky.id)}
                 >
                   📌 {sticky.title || 'Quick Note'}
                 </div>
@@ -225,55 +276,69 @@ export default function App() {
 
         {/* Tab bar */}
         <div className="flex items-center px-4 h-[50px] border-b gap-2 flex-shrink-0 transition-colors duration-300" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }}>
-          <button className="w-9 h-9 rounded border flex items-center justify-center text-lg opacity-30 cursor-not-allowed" style={{ borderColor: 'var(--border-color)' }}>←</button>
-          <button className="w-9 h-9 rounded border flex items-center justify-center text-lg opacity-30 cursor-not-allowed" style={{ borderColor: 'var(--border-color)' }}>→</button>
-
-          {/* Home tab */}
-          <div
-            className="flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm cursor-pointer transition-all"
-            style={{
-              background: selectedFolder === null ? 'var(--bg-primary)' : 'var(--border-color)',
-              fontWeight: selectedFolder === null ? 600 : 400,
-              color: 'var(--text-primary)',
-              minWidth: '120px'
+          {openTabs.map((tab, index) => {
+            const displayName = tab === null ? 'Homepage' : (folders.find(f => f.id === tab.id)?.name ?? tab.name);
+            return (
+              <div
+                key={tab === null ? `home-${index}` : `folder-${tab.id}`}
+                className="flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm cursor-pointer transition-all"
+                style={{
+                  background: index === activeTabIndex ? 'var(--bg-primary)' : 'var(--border-color)',
+                  fontWeight: index === activeTabIndex ? 600 : 400,
+                  color: 'var(--text-primary)',
+                  minWidth: '120px'
+                }}
+                onClick={() => setActiveTabIndex(index)}
+              >
+                {tab === null ? '🏠' : '📁'} <span className="truncate max-w-[120px]">{displayName}</span>
+                {openTabs.length > 1 && (
+                  <button
+                    className="ml-auto text-base leading-none hover:text-red-500 transition-colors"
+                    style={{ color: 'var(--text-secondary)' }}
+                    onClick={(e) => { e.stopPropagation(); closeTab(index); }}
+                  >×</button>
+                )}
+              </div>
+            );
+          })}
+          <button
+            className="w-8 h-8 rounded border flex items-center justify-center text-lg font-bold ml-1 transition-all hover:bg-blue-500 hover:text-white hover:border-blue-500"
+            style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
+            onClick={() => {
+              const newIndex = openTabs.length;
+              setOpenTabs(prev => [...prev, null]);
+              setActiveTabIndex(newIndex);
             }}
-            onClick={() => setSelectedFolder(null)}
-          >
-            🏠 <span>Homepage</span>
-          </div>
-
-          {/* Folder tab */}
-          {selectedFolder && (
-            <div
-              className="flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm font-semibold"
-              style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minWidth: '120px' }}
-            >
-              📁 <span className="truncate max-w-[120px]">{selectedFolder.name}</span>
-              <button
-                className="ml-auto text-base leading-none hover:text-red-500 transition-colors"
-                style={{ color: 'var(--text-secondary)' }}
-                onClick={() => setSelectedFolder(null)}
-              >×</button>
-            </div>
-          )}
-
-          <button className="w-8 h-8 rounded border flex items-center justify-center text-lg font-bold ml-1 transition-all hover:bg-blue-500 hover:text-white hover:border-blue-500" style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}>+</button>
+          >+</button>
         </div>
 
         {/* Content area */}
         <div className="flex-1 overflow-y-auto p-8 transition-colors duration-300" style={{ background: 'var(--bg-primary)' }}>
-          {searchQuery.trim() ? (
+          {/* Error banner */}
+          {(foldersError || notesError) && (
+            <div className="mb-4 px-4 py-3 rounded-lg text-sm font-medium" style={{ background: 'var(--error-bg)', color: 'var(--error-text)', border: '1px solid var(--error-border)' }}>
+              {foldersError || notesError}
+            </div>
+          )}
+
+          {/* Loading state */}
+          {(foldersLoading || (selectedFolder && notesLoading)) ? (
+            <div className="flex flex-col items-center justify-center py-24">
+              <div className="w-8 h-8 border-3 rounded-full animate-spin mb-4" style={{ borderColor: 'var(--border-color)', borderTopColor: 'var(--accent-blue)', borderWidth: '3px' }} />
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Loading...</p>
+            </div>
+          ) : searchQuery.trim() ? (
             <SearchResults
               query={searchQuery.trim()}
               folders={searchMatchingFolders}
               notes={searchResultNotes}
               onFolderClick={(folder) => {
-                setSelectedFolder(folder);
+                navigateTo(folder);
                 setSearchQuery('');
               }}
               onNoteClick={(note) => {
                 const noteFolder = folders.find(f => f.id === note.folder_id);
-                if (noteFolder) setSelectedFolder(noteFolder);
+                if (noteFolder) navigateTo(noteFolder);
                 setSearchQuery('');
               }}
             />
@@ -285,9 +350,16 @@ export default function App() {
               </div>
               <FolderList
                 folders={rootFolders}
-                onSelect={setSelectedFolder}
+                itemCounts={itemCounts}
+                onSelect={navigateTo}
                 onEdit={setEditingFolder}
-                onDelete={setDeletingFolderId}
+                onDelete={async (id) => {
+                  if (confirmDelete) {
+                    setDeletingFolderId(id);
+                  } else {
+                    await removeFolder(id);
+                  }
+                }}
               />
 
               <hr className="my-10 border-0 h-px" style={{ background: 'linear-gradient(to right, transparent, var(--border-color), transparent)' }} />
@@ -312,7 +384,13 @@ export default function App() {
                       key={sticky.id}
                       stickyNote={sticky}
                       onClick={() => setViewingStickyNoteId(sticky.id)}
-                      onDelete={() => setDeletingStickyNoteId(sticky.id)}
+                      onDelete={async () => {
+                        if (confirmDelete) {
+                          setDeletingStickyNoteId(sticky.id);
+                        } else {
+                          await removeStickyNote(sticky.id);
+                        }
+                      }}
                     />
                   ))}
                 </div>
@@ -336,16 +414,29 @@ export default function App() {
               folder={selectedFolder}
               notes={notes}
               subfolders={subfolders}
+              itemCounts={itemCounts}
               onNoteClick={(note: Note) => setSelectedNoteId(note.id)}
-              onNoteDelete={removeNote}
+              onNoteDelete={async (id) => {
+                if (confirmDelete) {
+                  setDeletingNoteId(id);
+                } else {
+                  await removeNote(id);
+                }
+              }}
               onAddNote={() => setShowCreateNote(true)}
               onAddFolder={() => {
                 setCreateFolderParentId(selectedFolder!.id);
                 setShowCreateFolder(true);
               }}
-              onSubfolderSelect={setSelectedFolder}
+              onSubfolderSelect={navigateTo}
               onSubfolderEdit={setEditingFolder}
-              onSubfolderDelete={setDeletingFolderId}
+              onSubfolderDelete={async (id) => {
+                if (confirmDelete) {
+                  setDeletingFolderId(id);
+                } else {
+                  await removeFolder(id);
+                }
+              }}
             />
           )}
         </div>
@@ -384,6 +475,19 @@ export default function App() {
           onConfirm={async () => {
             await removeFolder(deletingFolderId);
             setDeletingFolderId(null);
+          }}
+        />
+      )}
+
+      {/* Delete Note Confirm Modal */}
+      {deletingNoteId !== null && (
+        <DeleteConfirmModal
+          title="Delete Note"
+          message="Are you sure you want to delete this note? This action cannot be undone."
+          onClose={() => setDeletingNoteId(null)}
+          onConfirm={async () => {
+            await removeNote(deletingNoteId);
+            setDeletingNoteId(null);
           }}
         />
       )}

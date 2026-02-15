@@ -3,15 +3,14 @@ import type { Folder } from '../types/electron';
 
 interface Props {
   folder: Folder;
+  itemCount?: number;
   onClick: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }
 
-export default function FolderCard({ folder, onClick, onEdit, onDelete }: Props) {
+export default function FolderCard({ folder, itemCount = 0, onClick, onEdit, onDelete }: Props) {
   const [hovered, setHovered] = useState(false);
-
-  const itemCount: number = 0;
 
   return (
     <div

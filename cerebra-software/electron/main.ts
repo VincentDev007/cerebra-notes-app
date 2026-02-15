@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import { initializeDatabase } from '../backend/database/init';
-import { getAllFolders, createFolder, updateFolder, deleteFolder } from '../backend/database/folders';
+import { getAllFolders, createFolder, updateFolder, deleteFolder, getFolderItemCounts } from '../backend/database/folders';
 import { getNotesByFolder, createNote, updateNote, deleteNote, searchNotes } from '../backend/database/notes';
 import { getAllStickyNotes, createStickyNote, updateStickyNote, deleteStickyNote } from '../backend/database/sticky-notes';
 import { getSetting, setSetting, getAllSettings } from '../backend/database/settings';
@@ -12,6 +12,7 @@ function registerIpcHandlers(): void {
   ipcMain.handle('folders:create', (_event, input) => createFolder(input));
   ipcMain.handle('folders:update', (_event, id, input) => updateFolder(id, input));
   ipcMain.handle('folders:delete', (_event, id) => deleteFolder(id));
+  ipcMain.handle('folders:getItemCounts', () => getFolderItemCounts());
 
   // Notes
   ipcMain.handle('notes:getByFolder', (_event, folderId) => getNotesByFolder(folderId));

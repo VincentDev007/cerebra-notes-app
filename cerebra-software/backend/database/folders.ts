@@ -41,6 +41,21 @@ export const deleteFolder = (id: number): boolean => {
   return result.changes > 0;
 };
 
+export const getFolderItemCounts = (): Record<number, number> => {
+  const stmt = db.prepare(`
+    SELECT f.id,
+      (SELECT COUNT(*) FROM notes WHERE folder_id = f.id) +
+      (SELECT COUNT(*) FROM folders WHERE parent_id = f.id) AS item_count
+    FROM folders f
+  `);
+  const rows = stmt.all() as { id: number; item_count: number }[];
+  const counts: Record<number, number> = {};
+  for (const row of rows) {
+    counts[row.id] = row.item_count;
+  }
+  return counts;
+};
+
 
 
 

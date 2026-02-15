@@ -21,3 +21,7 @@ export async function updateFolder(
 export async function deleteFolder(id: number): Promise<boolean> {
   return window.electronAPI.folders.delete(id);
 }
+
+export async function getFolderItemCounts(): Promise<Record<number, number>> {
+  return window.electronAPI.folders.getItemCounts();
+}

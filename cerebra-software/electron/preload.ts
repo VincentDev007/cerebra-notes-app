@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     update: (id: number, input: { name?: string; parent_id?: number | null }) =>
       ipcRenderer.invoke('folders:update', id, input),
     delete: (id: number) => ipcRenderer.invoke('folders:delete', id),
+    getItemCounts: () => ipcRenderer.invoke('folders:getItemCounts'),
   },
 
   notes: {

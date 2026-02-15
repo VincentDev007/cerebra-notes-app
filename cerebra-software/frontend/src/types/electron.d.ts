@@ -29,6 +29,7 @@ export interface ElectronAPI {
     create: (input: { name: string; parent_id?: number | null }) => Promise<Folder>;
     update: (id: number, input: { name?: string; parent_id?: number | null }) => Promise<Folder | undefined>;
     delete: (id: number) => Promise<boolean>;
+    getItemCounts: () => Promise<Record<number, number>>;
   };
   notes: {
     getByFolder: (folderId: number) => Promise<Note[]>;

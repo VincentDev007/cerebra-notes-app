@@ -3,12 +3,13 @@ import FolderCard from './FolderCard';
 
 interface Props {
   folders: Folder[];
+  itemCounts?: Record<number, number>;
   onSelect: (folder: Folder) => void;
   onEdit: (folder: Folder) => void;
   onDelete: (id: number) => void;
 }
 
-export default function FolderList({ folders, onSelect, onEdit, onDelete }: Props) {
+export default function FolderList({ folders, itemCounts = {}, onSelect, onEdit, onDelete }: Props) {
   if (folders.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -28,6 +29,7 @@ export default function FolderList({ folders, onSelect, onEdit, onDelete }: Prop
         <FolderCard
           key={folder.id}
           folder={folder}
+          itemCount={itemCounts[folder.id] ?? 0}
           onClick={() => onSelect(folder)}
           onEdit={() => onEdit(folder)}
           onDelete={() => onDelete(folder.id)}

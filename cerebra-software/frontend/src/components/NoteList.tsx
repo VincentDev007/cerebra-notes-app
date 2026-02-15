@@ -6,6 +6,7 @@ interface Props {
   folder: Folder;
   notes: Note[];
   subfolders: Folder[];
+  itemCounts?: Record<number, number>;
   onNoteClick: (note: Note) => void;
   onNoteDelete: (id: number) => void;
   onAddNote: () => void;
@@ -23,7 +24,7 @@ function formatDate(isoDate: string): string {
   });
 }
 
-export default function NoteList({ folder, notes, subfolders, onNoteClick, onNoteDelete, onAddNote, onAddFolder, onSubfolderSelect, onSubfolderEdit, onSubfolderDelete }: Props) {
+export default function NoteList({ folder, notes, subfolders, itemCounts = {}, onNoteClick, onNoteDelete, onAddNote, onAddFolder, onSubfolderSelect, onSubfolderEdit, onSubfolderDelete }: Props) {
   return (
     <div>
       {/* Folder header */}
@@ -113,6 +114,7 @@ export default function NoteList({ folder, notes, subfolders, onNoteClick, onNot
               <FolderCard
                 key={subfolder.id}
                 folder={subfolder}
+                itemCount={itemCounts[subfolder.id] ?? 0}
                 onClick={() => onSubfolderSelect(subfolder)}
                 onEdit={() => onSubfolderEdit(subfolder)}
                 onDelete={() => onSubfolderDelete(subfolder.id)}
