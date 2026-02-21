@@ -1,3 +1,46 @@
+/**
+ * NoteList COMPONENT — frontend/src/components/NoteList.tsx
+ *
+ * PURPOSE:
+ * The main view inside a folder — shows that folder's notes and direct subfolders.
+ * This is what you see when you open a folder tab (before clicking into a specific note).
+ *
+ * LAYOUT STRUCTURE:
+ * 1. Folder Header  → folder name, created date, "Add Note" + "Add Subfolder" buttons
+ * 2. Notes section  → grid of NoteCard components (or empty state)
+ * 3. Subfolders section → grid of FolderCard components (or empty state)
+ *
+ * DATA FLOW:
+ * NoteList is a pure presentational component — it receives all data and callbacks as props.
+ * It does NOT fetch data or manage state. The parent (app.tsx) handles all that.
+ * This makes NoteList easy to understand: it just renders what it's given.
+ *
+ * SUBFOLDERS vs ROOT FOLDERS:
+ * The parent (app.tsx) passes only direct subfolders:
+ *   subfolders = folders.filter(f => f.parent_id === selectedFolder.id)
+ * NoteList doesn't need to filter — it receives exactly what to display.
+ *
+ * SAME GRID PATTERN AS FolderList:
+ * Both sections use repeat(auto-fill, minmax(200px, 1fr)) for responsive card layouts.
+ *
+ * EMPTY STATES:
+ * Notes: centered empty state with illustration (no notes yet → "Add your first note")
+ * Subfolders: smaller inline message (less emphasis, subfolders are optional)
+ *
+ * PROPS OVERVIEW:
+ * folder           → the current folder being viewed
+ * notes            → notes IN this folder (filtered by folder_id)
+ * subfolders       → direct subfolders (parent_id === folder.id)
+ * itemCounts       → { folderId: count } for subfolder badges
+ * onNoteClick      → open NoteEditor for a note
+ * onNoteDelete     → delete a note (may trigger confirm modal in app.tsx)
+ * onAddNote        → open CreateNoteModal
+ * onAddFolder      → open CreateFolderModal with this folder as parent
+ * onSubfolderSelect → navigate into a subfolder (open as new tab)
+ * onSubfolderEdit   → rename a subfolder
+ * onSubfolderDelete → delete a subfolder
+ */
+
 import type { Folder, Note } from '../types/electron';
 import NoteCard from './NoteCard';
 import FolderCard from './FolderCard';
@@ -16,6 +59,7 @@ interface Props {
   onSubfolderDelete: (id: number) => void;
 }
 
+/** Formats ISO 8601 string to "Jan 15, 2024" */
 function formatDate(isoDate: string): string {
   return new Date(isoDate).toLocaleDateString('en-US', {
     month: 'short',

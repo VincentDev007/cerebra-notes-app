@@ -1,12 +1,53 @@
+/**
+ * NoteCard COMPONENT — frontend/src/components/NoteCard.tsx
+ *
+ * PURPOSE:
+ * A single card in the notes grid inside a folder view.
+ * Displays: note icon, title, content preview, creation date.
+ * Shows a delete button on hover (hidden otherwise via opacity: 0 → 1).
+ * Clicking the card opens the NoteEditor via the onClick callback.
+ *
+ * HOVER STATE PATTERN:
+ * useState(false) tracks whether the mouse is over this card.
+ * onMouseEnter → setHovered(true), onMouseLeave → setHovered(false).
+ * The hovered boolean drives:
+ *   - Visual lift: transform translateY(-4px) on hover
+ *   - Shadow change: var(--note-shadow-hover) vs var(--card-shadow)
+ *   - Delete button visibility: opacity 1 vs 0
+ * WHY manage hover in JS instead of CSS :hover?
+ * Because we need to change multiple properties (shadow, transform, opacity)
+ * that are set via inline styles (for theme variable support) — CSS :hover
+ * can't easily override inline styles.
+ *
+ * EVENT PROPAGATION:
+ * The delete button uses e.stopPropagation() to prevent the click from
+ * bubbling up to the parent div's onClick handler.
+ * Without this, clicking Delete would also open the NoteEditor.
+ *
+ * CONTENT PREVIEW TRUNCATION:
+ * Uses CSS -webkit-line-clamp: 2 to truncate to exactly 2 lines.
+ * This is a non-standard but widely supported CSS property for multiline truncation.
+ * The JS getPreview() function provides a character-count fallback.
+ *
+ * CSS VARIABLES for theming:
+ * All colors reference CSS variables (var(--...)) defined in index.css.
+ * This allows instant light/dark mode switching without component changes.
+ */
+
 import { useState } from 'react';
 import type { Note } from '../types/electron';
 
 interface Props {
   note: Note;
-  onClick: () => void;
-  onDelete: () => void;
+  onClick: () => void;    // Called when the card is clicked (opens NoteEditor)
+  onDelete: () => void;   // Called when the delete button is clicked
 }
 
+/**
+ * formatDate() — formats an ISO 8601 date string to a human-readable short date.
+ * Input:  "2024-01-15T10:30:00.000Z"
+ * Output: "Jan 15, 2024"
+ */
 function formatDate(isoDate: string): string {
   return new Date(isoDate).toLocaleDateString('en-US', {
     month: 'short',
@@ -15,6 +56,13 @@ function formatDate(isoDate: string): string {
   });
 }
 
+/**
+ * getPreview() — truncates note content for the card preview.
+ * Returns 'No content yet...' if content is empty.
+ * Returns full content if it fits within maxLength.
+ * Returns truncated content + '...' if too long.
+ * maxLength defaults to 80 characters.
+ */
 function getPreview(content: string, maxLength = 80): string {
   if (!content || content.trim() === '') return 'No content yet...';
   const trimmed = content.trim();
@@ -22,6 +70,7 @@ function getPreview(content: string, maxLength = 80): string {
 }
 
 export default function NoteCard({ note, onClick, onDelete }: Props) {
+  // hovered drives the lift animation and delete button visibility
   const [hovered, setHovered] = useState(false);
 
   return (

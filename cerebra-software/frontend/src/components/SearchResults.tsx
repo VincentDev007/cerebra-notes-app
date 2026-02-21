@@ -1,13 +1,54 @@
+/**
+ * SearchResults COMPONENT — frontend/src/components/SearchResults.tsx
+ *
+ * PURPOSE:
+ * Displays search results when the user types in the search bar.
+ * Shows two sections: matching FOLDERS (client-side) and matching NOTES (DB query).
+ * Replaces the main content area when a search query is active.
+ *
+ * HOW SEARCH WORKS (from app.tsx):
+ * TWO DIFFERENT SEARCH STRATEGIES:
+ * 1. Notes search: IPC call → DB LIKE query across all notes → server-side
+ *    Handled by: searchNotes() service → notes:search IPC → backend/notes.ts
+ *
+ * 2. Folders search: client-side filter on the already-loaded folders array
+ *    Handled by: app.tsx filter: folders.filter(f => f.name.toLowerCase().includes(query))
+ *    Why client-side? All folders are already loaded in memory — no DB round-trip needed.
+ *
+ * BOTH results are passed as props to this component — it's purely presentational.
+ *
+ * CONDITIONAL SECTIONS:
+ * {folders.length > 0 && (...)} — only render the folders section if there are matches.
+ * {notes.length > 0 && (...)}  — only render the notes section if there are matches.
+ * This prevents empty section headers when one type has no results.
+ *
+ * SEARCH RESULT INTERACTION:
+ * Clicking a folder: navigates into the folder + clears the search query (app.tsx)
+ * Clicking a note: navigates to the note's folder, then selects the note + clears search
+ *
+ * DEBOUNCE (in app.tsx):
+ * The search effect uses setTimeout(300ms) — waits 300ms after the last keystroke
+ * before actually running the search. This prevents IPC calls on every character.
+ *
+ * EMPTY STATE:
+ * When totalResults === 0, shows an empty state illustration.
+ *
+ * RESULT COUNTS:
+ * totalResults = folders.length + notes.length
+ * "{totalResults} result{totalResults !== 1 ? 's' : ''}" → handles singular/plural
+ */
+
 import type { Folder, Note } from '../types/electron';
 
 interface Props {
-    query: string;
-    folders: Folder[];
-    notes: Note[];
-    onFolderClick: (folder: Folder) => void;
-    onNoteClick: (note: Note) => void;
+    query: string;                           // The active search query (for display)
+    folders: Folder[];                       // Client-side filtered folders
+    notes: Note[];                           // Server-side searched notes
+    onFolderClick: (folder: Folder) => void; // Navigate to folder + clear search
+    onNoteClick: (note: Note) => void;       // Navigate to note's folder + clear search
 }
 
+/** Formats ISO 8601 string to "Jan 15, 2024" */
 function formatDate(isoDate: string): string {
     return new Date(isoDate).toLocaleDateString('en-US', {
         month: 'short',
@@ -16,6 +57,7 @@ function formatDate(isoDate: string): string {
     });
 }
 
+/** Truncates content to maxLength characters for note previews in search results */
 function getPreview(content: string, maxLength = 100): string {
     if (!content || content.trim() === '') return 'No content';
     const trimmed = content.trim();
@@ -23,6 +65,7 @@ function getPreview(content: string, maxLength = 100): string {
 }
 
 export default function SearchResults({ query, folders, notes, onFolderClick, onNoteClick }: Props) {
+    // Total results for the summary line ("5 results for "hello"")
     const totalResults = folders.length + notes.length;
 
     return (
