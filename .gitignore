@@ -1,10 +1,28 @@
-# Ignore the old vanilla version (v1)
-vanilla-cerebra-software/
+# Dependencies
+cerebra-software/node_modules/
 
-# Editor files
-.vscode/
-.idea/
+# Build outputs
+cerebra-software/dist
+release/
+
+# Environment files
+.env
+.env.local
 
 # OS files
 .DS_Store
 Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Database (for now - we'll create a sample DB later)
+*.db
+*.sqlite

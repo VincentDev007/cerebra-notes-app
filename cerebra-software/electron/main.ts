@@ -22,10 +22,10 @@ import path from 'path';
 import { initializeDatabase } from '../backend/database/init';
 
 // Import all database CRUD functions — organized by entity
-import { getAllFolders, createFolder, updateFolder, deleteFolder, getFolderItemCounts } from '../backend/database/folders';
-import { getNotesByFolder, createNote, updateNote, deleteNote, searchNotes } from '../backend/database/notes';
-import { getAllStickyNotes, createStickyNote, updateStickyNote, deleteStickyNote } from '../backend/database/sticky-notes';
-import { getSetting, setSetting, getAllSettings } from '../backend/database/settings';
+import { getAllFolders, createFolder, updateFolder, deleteFolder, getFolderItemCounts } from '../backend/database/repositories/folders';
+import { getNotesByFolder, createNote, updateNote, deleteNote, searchNotes } from '../backend/database/repositories/notes';
+import { getAllStickyNotes, createStickyNote, updateStickyNote, deleteStickyNote } from '../backend/database/repositories/sticky-notes';
+import { getSetting, setSetting, getAllSettings } from '../backend/database/repositories/settings';
 
 /**
  * registerIpcHandlers()

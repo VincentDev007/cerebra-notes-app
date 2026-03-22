@@ -1,37 +1,3 @@
-/**
- * DATABASE TYPES — backend/database/types.ts
- *
- * PURPOSE:
- * TypeScript interfaces that describe the shape of database rows and input objects.
- * These types live in the backend and are used by the CRUD modules (folders.ts, notes.ts, etc.).
- *
- * NOTE ON DUPLICATION:
- * There is a parallel set of interfaces in frontend/src/types/electron.d.ts.
- * They look identical here, but that's intentional — the backend types describe
- * the raw database shape, while the frontend types describe what crosses the IPC bridge.
- * In a larger project you might share them via a package, but for this desktop app
- * keeping them separate avoids coupling the frontend to backend internals.
- *
- * PATTERN — Separate "full" types from "input" types:
- *   Folder          → what you get BACK from the database (has id, timestamps)
- *   CreateFolderInput → what you SEND IN to create a new record (no id, no timestamps)
- *   UpdateFolderInput → partial update — all fields optional (you set only what changes)
- */
-
-// ─────────────────────────────────────────────────────────────────
-// ENTITY TYPES — Mirror the columns in the database tables
-// ─────────────────────────────────────────────────────────────────
-
-/**
- * Folder — represents a row from the `folders` table.
- *
- * parent_id: null  → root-level folder (shown on the homepage)
- * parent_id: number → subfolder (child of another folder)
- * This enables the recursive/hierarchical folder tree structure.
- *
- * created_at / modified_at are stored as ISO 8601 strings (e.g. "2024-01-15T10:30:00.000Z")
- * because SQLite has no native date type — TEXT is the standard approach.
- */
 export interface Folder {
     id: number;
     name: string;
@@ -135,3 +101,20 @@ export interface CreateStickyNoteInput {
   title?: string;   // Optional — defaults to 'Quick Note'
   content: string;  // Required — must have content
 }
+
+export interface UpdateStickyNoteInput {
+  title?: string;
+  content: string;
+}
+
+
+
+
+
+
+
+
+
+
+
+
