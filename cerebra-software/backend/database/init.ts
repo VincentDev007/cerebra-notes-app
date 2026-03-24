@@ -13,11 +13,29 @@ const readSchema = (): string => {
 };
 
 const createTables = (): void => {
-  console.log('Creating database tables...');
+  try {
+    console.log('Creating database tables...');
 
-  const schema = readSchema();
-  db.exec(schema);
-  console.log('✓ Tables and indexes created successfully');
+    const schema = readSchema();
+    db.exec(schema);
+
+    console.log('✓ Tables and indexes created successfully');
+  } catch (error) {
+    console.error('Error creating database tables:', error);
+    throw error;
+  }
+};
+
+const populateFts = (): void => {
+  try {
+    db.exec(`
+      INSERT INTO notes_fts(rowid, title, content)
+      SELECT id, title, content FROM notes
+      `);
+  } catch (error) {
+    console.error('Error populating FTS tables:', error);
+    throw error;
+  }
 };
 
 const initializeDefaultSettings = (): void => {
@@ -73,7 +91,7 @@ export const initializeDatabase = (): void => {
     console.log('First run detected - initializing database...');
 
     createTables();
-
+    populateFts();
     initializeDefaultSettings();
 
     console.log('✓ Database initialization complete!');
