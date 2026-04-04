@@ -24,7 +24,9 @@ import type { Folder } from '../types/electron';
  * Called by useFolders hook on mount and after any mutation.
  */
 export async function getFolders(): Promise<Folder[]> {
-  return window.electronAPI.folders.getAll();
+  const { data, error } = await window.electronAPI.folders.getAll();
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -41,7 +43,9 @@ export async function createFolder(
   name: string,
   parent_id?: number | null
 ): Promise<Folder> {
-  return window.electronAPI.folders.create({ name, parent_id });
+  const { data, error } = await window.electronAPI.folders.create({ name, parent_id });
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -56,7 +60,9 @@ export async function updateFolder(
   id: number,
   input: { name?: string; parent_id?: number | null }
 ): Promise<Folder | undefined> {
-  return window.electronAPI.folders.update(id, input);
+  const { data, error } = await window.electronAPI.folders.update(id, input);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -66,7 +72,9 @@ export async function updateFolder(
  * Returns true if deleted, false if not found.
  */
 export async function deleteFolder(id: number): Promise<boolean> {
-  return window.electronAPI.folders.delete(id);
+  const { data, error } = await window.electronAPI.folders.delete(id);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -77,5 +85,7 @@ export async function deleteFolder(id: number): Promise<boolean> {
  * Fetched alongside getFolders() in a Promise.all() for efficiency.
  */
 export async function getFolderItemCounts(): Promise<Record<number, number>> {
-  return window.electronAPI.folders.getItemCounts();
+  const { data, error } = await window.electronAPI.folders.getItemCounts();
+  if (error) throw new Error(error);
+  return data;
 }

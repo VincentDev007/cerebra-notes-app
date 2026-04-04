@@ -40,7 +40,9 @@ import type { Note } from '../types/electron';
  * Called by useNotes hook whenever the active folder changes.
  */
 export async function getNotesByFolder(folderId: number): Promise<Note[]> {
-  return window.electronAPI.notes.getByFolder(folderId);
+  const { data, error } = await window.electronAPI.notes.getByFolder(folderId);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -53,7 +55,9 @@ export async function createNote(input: {
   content?: string;
   folder_id: number;
 }): Promise<Note> {
-  return window.electronAPI.notes.create(input);
+  const { data, error } = await window.electronAPI.notes.create(input);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -65,7 +69,9 @@ export async function updateNote(
   id: number,
   input: { title?: string; content?: string }
 ): Promise<Note | undefined> {
-  return window.electronAPI.notes.update(id, input);
+  const { data, error } = await window.electronAPI.notes.update(id, input);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -74,7 +80,9 @@ export async function updateNote(
  * Returns true if deleted, false if the id wasn't found.
  */
 export async function deleteNote(id: number): Promise<boolean> {
-  return window.electronAPI.notes.delete(id);
+  const { data, error } = await window.electronAPI.notes.delete(id);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -87,5 +95,7 @@ export async function deleteNote(id: number): Promise<boolean> {
  * crosses folder boundaries — it's not scoped to the active folder.
  */
 export async function searchNotes(query: string): Promise<Note[]> {
-  return window.electronAPI.notes.search(query);
+  const { data, error } = await window.electronAPI.notes.search(query);
+  if (error) throw new Error(error);
+  return data;
 }

@@ -6,7 +6,7 @@ const stmtGetNoteById = db.prepare('SELECT id, title, content, folder_id, create
 const stmtCreateNote = db.prepare('INSERT INTO notes (title, content, folder_id, created_at, modified_at) VALUES (?, ?, ?, ?, ?)');
 const stmtUpdateNote = db.prepare('UPDATE notes SET title = ?, content = ?, modified_at = ? WHERE id = ?');
 const stmtDeleteNote = db.prepare('DELETE FROM notes WHERE id = ?');
-const stmtSearchNotes = db.prepare('SELECT id, title, content, folder_id, created_at, modified_at FROM notes WHERE title LIKE ? OR content LIKE ? ORDER BY modified_at DESC');
+const stmtSearchNotes = db.prepare('SELECT notes.id, notes.title, notes.content, notes.folder_id, notes.created_at, notes.modified_at FROM notes_fts JOIN notes ON notes.id = notes_fts.rowid WHERE notes_fts MATCH ? ORDER BY rank');
 
 
 export const getNotesByFolder = (folderId: number): Note[] => {
@@ -70,7 +70,7 @@ export const updateNote = (id: number, input: UpdateNoteInput): Note | undefined
 
     stmtUpdateNote.run(title, content, now, id);
 
-    return { ...existing, title, content, modified_at: now };
+    return getNoteById(id);
   } catch (error) {
     console.error(`Error updating note with id ${id}:`, error);
     throw error;
@@ -100,9 +100,7 @@ export const searchNotes = (query: string): Note[] => {
       throw new Error('Search query cannot exceed 500 characters');
     }
 
-    const pattern = `%${query.trim()}%`;
-
-    return stmtSearchNotes.all(pattern, pattern) as Note[];
+    return stmtSearchNotes.all(query.trim()) as Note[];
   } catch (error) {
     console.error(`Error searching notes with query "${query}":`, error);
     throw error;

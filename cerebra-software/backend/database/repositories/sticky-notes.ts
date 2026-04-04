@@ -6,6 +6,7 @@ const stmtGetStickyNoteById = db.prepare('SELECT id, title, content, created_at,
 const stmtCreateStickyNote = db.prepare('INSERT INTO sticky_notes (title, content, created_at, modified_at) VALUES (?, ?, ?, ?)');
 const stmtUpdateStickyNote = db.prepare('UPDATE sticky_notes SET title = ?, content = ?, modified_at = ? WHERE id = ?');
 const stmtDeleteStickyNote = db.prepare('DELETE FROM sticky_notes WHERE id = ?');
+const stmtSearchStickyNotes = db.prepare('SELECT sticky_notes.id, sticky_notes.title, sticky_notes.content, sticky_notes.created_at, sticky_notes.modified_at FROM sticky_notes_fts JOIN sticky_notes ON sticky_notes.id = sticky_notes_fts.rowid WHERE sticky_notes_fts MATCH ? ORDER BY rank');
 
 
 export const getAllStickyNotes = (): StickyNote[] => {
@@ -89,6 +90,23 @@ export const deleteStickyNote = (id: number): boolean => {
     return result.changes > 0;
   } catch (error) {
     console.error(`Error deleting sticky note with id ${id}:`, error);
+    throw error;
+  }
+};
+
+export const searchStickyNotes = (query: string): StickyNote[] => {
+  try {
+    if (!query || !query.trim()) {
+      throw new Error('Search query cannot be empty');
+    }
+
+    if (query.trim().length > 500) {
+      throw new Error('Search query cannot exceed 500 characters');
+    }
+
+    return stmtSearchStickyNotes.all(query.trim()) as StickyNote[];
+  } catch (error) {
+    console.error(`Error searching sticky notes with query "${query}":`, error);
     throw error;
   }
 };

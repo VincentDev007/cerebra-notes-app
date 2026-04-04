@@ -1,7 +1,6 @@
 import { db } from "../connection";
 import { Setting } from "../types";
 
-const stmtGetSetting = db.prepare('SELECT value FROM settings WHERE key = ?');
 const stmtSetSetting = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
 const stmtGetAllSettings = db.prepare('SELECT key, value FROM settings');
 
@@ -11,6 +10,18 @@ const VALID_SETTINGS_KEYS_VALUES: Record<string, string[]> = {
   fontSize: ['small', 'medium', 'large'],
   animations: ['true', 'false'],
   theme: ['light', 'dark'],
+};
+
+let cache: Record<string, string> | null = null;
+
+const loadCache = (): Record<string, string> => {
+  if (cache) return cache;
+  const rows = stmtGetAllSettings.all() as Setting[];
+  cache = {};
+  for (const row of rows) {
+    cache[row.key] = row.value;
+  }
+  return cache;
 };
 
 
@@ -24,9 +35,7 @@ export const getSetting = (key: string): string | null => {
       throw new Error(`Invalid setting key: ${key}`);
     }
 
-    const row = stmtGetSetting.get(key.trim()) as { value: string } | undefined;
-
-    return row ? row.value : null;
+    return loadCache()[key.trim()] ?? null;
   } catch (error) {
     console.error(`Error fetching setting with key ${key}:`, error);
     throw error;
@@ -54,6 +63,7 @@ export const setSetting = (key: string, value: string): void => {
     }
 
     stmtSetSetting.run(key.trim(), value.trim());
+    loadCache()[key.trim()] = value.trim();
   } catch (error) {
     console.error(`Error setting value for key ${key}:`, error);
     throw error;
@@ -62,14 +72,7 @@ export const setSetting = (key: string, value: string): void => {
 
 export const getAllSettings = (): Record<string, string> => {
   try {
-    const rows = stmtGetAllSettings.all() as Setting[];
-
-    const result: Record<string, string> = {};
-    for (const row of rows) {
-      result[row.key] = row.value;
-    }
-
-    return result;
+    return loadCache();
   } catch (error) {
     console.error('Error fetching all settings:', error);
     throw error;

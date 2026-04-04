@@ -11,7 +11,7 @@
   "build": "npm run build:frontend && npm run build:electron && npm run build:backend",
   "build:frontend": "cd frontend && vite build",
   "build:electron": "tsc -p electron/tsconfig.json && cp backend/database/schema.sql dist/electron/backend/database/",
-  "build:backend": "tsc -p backend/tsconfig.json && mkdir -p dist/backend/database && cp backend/database/schema.sql dist/backend/database/",
+  "build:backend": "tsc -p backend/tsconfig.json && mkdir -p dist/backend/database dist/electron/backend/database && cp backend/database/schema.sql dist/backend/database/ && cp backend/database/schema.sql dist/electron/backend/database/",
   
   "package:win": "npm run build && electron-builder --win",
   "package:mac": "npm run build && electron-builder --mac",

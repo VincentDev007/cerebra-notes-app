@@ -29,7 +29,9 @@
  * More efficient than calling getSetting() multiple times.
  */
 export async function getAllSettings(): Promise<Record<string, string>> {
-  return window.electronAPI.settings.getAll();
+  const { data, error } = await window.electronAPI.settings.getAll();
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -39,7 +41,9 @@ export async function getAllSettings(): Promise<Record<string, string>> {
  * Useful when you need just one setting without loading all of them.
  */
 export async function getSetting(key: string): Promise<string | null> {
-  return window.electronAPI.settings.get(key);
+  const { data, error } = await window.electronAPI.settings.get(key);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -49,5 +53,7 @@ export async function getSetting(key: string): Promise<string | null> {
  * (no need to re-fetch all settings after a write).
  */
 export async function setSetting(key: string, value: string): Promise<void> {
-  return window.electronAPI.settings.set(key, value);
+  const { data, error } = await window.electronAPI.settings.set(key, value);
+  if (error) throw new Error(error);
+  return data;
 }

@@ -8,9 +8,10 @@ const stmtUpdateFolder = db.prepare('UPDATE folders SET name = ?, parent_id = ?,
 const stmtDeleteFolder = db.prepare('DELETE FROM folders WHERE id = ?');
 const stmtGetFolderItemCounts = db.prepare(`
   SELECT f.id,
-  (SELECT COUNT(*) FROM notes WHERE folder_id = f.id) +
-  (SELECT COUNT(*) FROM folders WHERE parent_id = f.id) AS item_count
+    COALESCE(nc.note_count, 0) + COALESCE(fc.folder_count, 0) AS item_count
   FROM folders f
+  LEFT JOIN (SELECT folder_id, COUNT(*) AS note_count FROM notes GROUP BY folder_id) nc ON f.id = nc.folder_id
+  LEFT JOIN (SELECT parent_id, COUNT(*) AS folder_count FROM folders GROUP BY parent_id) fc ON f.id = fc.parent_id
 `);
 
 
@@ -71,7 +72,7 @@ export const updateFolder = (id: number, input: UpdateFolderInput): Folder | und
 
     stmtUpdateFolder.run(name, parent_id, now, id);
 
-    return getFolderById(id);
+    return { ...existing, name, parent_id, modified_at: now };
   } catch (error) {
     console.error(`Error updating folder with id ${id}:`, error);
     throw error;

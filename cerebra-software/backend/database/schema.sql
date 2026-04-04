@@ -37,6 +37,8 @@ CREATE INDEX IF NOT EXISTS idx_notes_modified_at ON notes(modified_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_notes_title ON notes(title);
 
+CREATE INDEX IF NOT EXISTS idx_notes_folder_modified ON notes(folder_id, modified_at DESC);
+
 
 CREATE VIRTUAL TABLE IF NOT EXISTS notes_fts USING fts5(
   title,
@@ -51,3 +53,29 @@ CREATE VIRTUAL TABLE IF NOT EXISTS sticky_notes_fts USING fts5(
   content='sticky_notes',
   content_rowid='id'
 );
+
+
+CREATE TRIGGER IF NOT EXISTS notes_fts_insert AFTER INSERT ON notes BEGIN
+  INSERT INTO notes_fts(rowid, title, content) VALUES (new.id, new.title, new.content);
+END;
+
+CREATE TRIGGER IF NOT EXISTS notes_fts_update AFTER UPDATE ON notes BEGIN
+  UPDATE notes_fts SET title = new.title, content = new.content WHERE rowid = old.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS notes_fts_delete AFTER DELETE ON notes BEGIN
+  DELETE FROM notes_fts WHERE rowid = old.id;
+END;
+
+
+CREATE TRIGGER IF NOT EXISTS sticky_notes_fts_insert AFTER INSERT ON sticky_notes BEGIN
+  INSERT INTO sticky_notes_fts(rowid, title, content) VALUES (new.id, new.title, new.content);
+END;
+
+CREATE TRIGGER IF NOT EXISTS sticky_notes_fts_update AFTER UPDATE ON sticky_notes BEGIN
+  UPDATE sticky_notes_fts SET title = new.title, content = new.content WHERE rowid = old.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS sticky_notes_fts_delete AFTER DELETE ON sticky_notes BEGIN
+  DELETE FROM sticky_notes_fts WHERE rowid = old.id;
+END;

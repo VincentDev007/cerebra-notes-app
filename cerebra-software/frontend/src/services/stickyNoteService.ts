@@ -21,7 +21,9 @@ import type { StickyNote } from '../types/electron';
  * Called by useStickyNotes hook on mount and after any mutation.
  */
 export async function getStickyNotes(): Promise<StickyNote[]> {
-  return window.electronAPI.stickyNotes.getAll();
+  const { data, error } = await window.electronAPI.stickyNotes.getAll();
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -34,7 +36,9 @@ export async function createStickyNote(input: {
   title?: string;
   content: string;
 }): Promise<StickyNote> {
-  return window.electronAPI.stickyNotes.create(input);
+  const { data, error } = await window.electronAPI.stickyNotes.create(input);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -46,7 +50,9 @@ export async function updateStickyNote(
   id: number,
   input: { title?: string; content?: string }
 ): Promise<StickyNote | undefined> {
-  return window.electronAPI.stickyNotes.update(id, input);
+  const { data, error } = await window.electronAPI.stickyNotes.update(id, input);
+  if (error) throw new Error(error);
+  return data;
 }
 
 /**
@@ -55,5 +61,7 @@ export async function updateStickyNote(
  * Returns true if deleted, false if not found.
  */
 export async function deleteStickyNote(id: number): Promise<boolean> {
-  return window.electronAPI.stickyNotes.delete(id);
+  const { data, error } = await window.electronAPI.stickyNotes.delete(id);
+  if (error) throw new Error(error);
+  return data;
 }
