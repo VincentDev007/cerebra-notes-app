@@ -42,6 +42,7 @@
  */
 
 import type { Folder, Note } from '../types/electron';
+import { formatDate } from '../utils/dateFormat';
 import NoteCard from './NoteCard';
 import FolderCard from './FolderCard';
 
@@ -59,14 +60,6 @@ interface Props {
   onSubfolderDelete: (id: number) => void;
 }
 
-/** Formats ISO 8601 string to "Jan 15, 2024" */
-function formatDate(isoDate: string): string {
-  return new Date(isoDate).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 export default function NoteList({ folder, notes, subfolders, itemCounts = {}, onNoteClick, onNoteDelete, onAddNote, onAddFolder, onSubfolderSelect, onSubfolderEdit, onSubfolderDelete }: Props) {
   return (

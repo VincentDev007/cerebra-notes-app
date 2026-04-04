@@ -62,20 +62,18 @@ export function useStickyNotes() {
    * Repacks them into the { title, content } shape the service expects.
    */
   const create = async (content: string, title?: string) => {
-    await createStickyNote({ title, content });
-    await fetchStickyNotes();
+    const newNote = await createStickyNote({ title, content });
+    if (newNote) setStickyNotes(prev => [newNote, ...prev]);
   };
 
-  /** update — partially updates a sticky note's title/content, then re-fetches. */
   const update = async (id: number, input: { title?: string; content?: string }) => {
-    await updateStickyNote(id, input);
-    await fetchStickyNotes();
+    const updatedNote = await updateStickyNote(id, input);
+    if (updatedNote) setStickyNotes(prev => prev.map(n => n.id === id ? updatedNote : n));
   };
 
-  /** remove — deletes a sticky note by id, then re-fetches to update the list. */
   const remove = async (id: number) => {
     await deleteStickyNote(id);
-    await fetchStickyNotes();
+    setStickyNotes(prev => prev.filter(n => n.id !== id));
   };
 
   return { stickyNotes, loading, error, create, update, remove };

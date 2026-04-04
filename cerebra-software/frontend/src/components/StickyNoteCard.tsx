@@ -26,8 +26,9 @@
  * e.stopPropagation() → prevents delete click from bubbling to card click
  */
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import type { StickyNote } from '../types/electron';
+import { formatDate } from '../utils/dateFormat';
 
 interface Props {
     stickyNote: StickyNote;
@@ -35,14 +36,6 @@ interface Props {
     onDelete: () => void;   // Triggers delete (with or without confirm modal)
 }
 
-/** Formats ISO 8601 string to "Jan 15, 2024" */
-function formatDate(isoDate: string): string {
-    return new Date(isoDate).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
 
 /**
  * getPreview() — truncates content to maxLength characters for the card preview.
@@ -54,7 +47,7 @@ function getPreview(content: string, maxLength = 100): string {
     return trimmed.length <= maxLength ? trimmed : trimmed.substring(0, maxLength) + '...';
 }
 
-export default function StickyNoteCard({ stickyNote, onClick, onDelete }: Props) {
+export default memo(function StickyNoteCard({ stickyNote, onClick, onDelete }: Props) {
     // hover drives the lift animation and delete button visibility
     const [hovered, setHovered] = useState(false);
 
@@ -112,4 +105,4 @@ export default function StickyNoteCard({ stickyNote, onClick, onDelete }: Props)
             </div>
         </div>
     );
-}
+});

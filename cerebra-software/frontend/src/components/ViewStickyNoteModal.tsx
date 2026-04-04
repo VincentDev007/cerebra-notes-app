@@ -35,26 +35,13 @@
 
 import { useEffect } from 'react';
 import type { StickyNote } from '../types/electron';
+import { formatDateTime } from '../utils/dateFormat';
 
 interface Props {
     stickyNote: StickyNote;
     onClose: () => void;
 }
 
-/**
- * formatDate() — formats ISO 8601 date with TIME for sticky notes.
- * More precise than other formatDate functions — includes hour and minute.
- * Result: "Jan 15, 2024, 10:30 AM"
- */
-function formatDate(isoDate: string): string {
-    return new Date(isoDate).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',    // Adds hour (e.g. "10")
-        minute: '2-digit',  // Adds minutes with leading zero (e.g. "05" not "5")
-    });
-}
 
 export default function ViewStickyNoteModal({ stickyNote, onClose }: Props) {
     // Escape key → close the modal (same pattern as all other modals)
@@ -107,7 +94,7 @@ export default function ViewStickyNoteModal({ stickyNote, onClose }: Props) {
                     style={{ borderColor: 'var(--border-color)' }}
                 >
                     <span className="text-xs" style={{ color: 'var(--text-light)' }}>
-                        Created {formatDate(stickyNote.created_at)}
+                        Created {formatDateTime(stickyNote.created_at)}
                     </span>
                     <button
                         className="px-5 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-gray-100"

@@ -39,6 +39,7 @@
  */
 
 import type { Folder, Note } from '../types/electron';
+import { formatDate } from '../utils/dateFormat';
 
 interface Props {
     query: string;                           // The active search query (for display)
@@ -48,14 +49,7 @@ interface Props {
     onNoteClick: (note: Note) => void;       // Navigate to note's folder + clear search
 }
 
-/** Formats ISO 8601 string to "Jan 15, 2024" */
-function formatDate(isoDate: string): string {
-    return new Date(isoDate).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
+
 
 /** Truncates content to maxLength characters for note previews in search results */
 function getPreview(content: string, maxLength = 100): string {

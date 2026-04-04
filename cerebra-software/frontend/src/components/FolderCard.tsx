@@ -31,7 +31,7 @@
  * This is intentional — both card types have the same interaction model.
  */
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import type { Folder } from '../types/electron';
 
 interface Props {
@@ -42,7 +42,7 @@ interface Props {
   onDelete: () => void;  // Trigger delete (with or without confirm modal)
 }
 
-export default function FolderCard({ folder, itemCount = 0, onClick, onEdit, onDelete }: Props) {
+export default memo(function FolderCard({ folder, itemCount = 0, onClick, onEdit, onDelete }: Props) {
   // Drives hover animations and button visibility
   const [hovered, setHovered] = useState(false);
 
@@ -92,4 +92,4 @@ export default function FolderCard({ folder, itemCount = 0, onClick, onEdit, onD
       </div>
     </div>
   );
-}
+});

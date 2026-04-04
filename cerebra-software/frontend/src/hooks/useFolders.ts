@@ -90,8 +90,11 @@ export function useFolders() {
    * Re-fetching updates both the folders list AND itemCounts (new parent gets +1).
    */
   const create = async (name: string, parent_id?: number | null) => {
-    await createFolder(name, parent_id);
-    await fetchFolders();  // Refresh to include the new folder and updated counts
+    const newFolder = await createFolder(name, parent_id);
+    if (newFolder) {
+      setFolders(prev => [...prev, newFolder].sort((a, b) => a.name.localeCompare(b.name)));
+      if (parent_id) setItemCounts(prev => ({ ...prev, [parent_id]: (prev[parent_id] ?? 0) + 1 }));
+    }
   };
 
   /**
@@ -99,8 +102,8 @@ export function useFolders() {
    * Partial input: only send the fields you want to change.
    */
   const update = async (id: number, input: { name?: string; parent_id?: number | null }) => {
-    await updateFolder(id, input);
-    await fetchFolders();  // Refresh to show renamed folder and any changed parent counts
+    const updatedFolder = await updateFolder(id, input);
+    if (updatedFolder) setFolders(prev => prev.map(f => f.id === id ? updatedFolder : f).sort((a, b) => a.name.localeCompare(b.name)));
   };
 
   /**

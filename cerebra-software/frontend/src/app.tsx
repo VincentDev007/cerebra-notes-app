@@ -115,7 +115,7 @@
  *   {viewingStickyNoteId !== null && (() => { const sticky = ...; return sticky ? <Modal /> : null; })()}
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import type { Folder, Note } from './types/electron';
 import { useFolders } from './hooks/useFolders';
 import { useNotes } from './hooks/useNotes';
@@ -127,13 +127,13 @@ import NoteList from './components/NoteList';
 import NoteEditor from './components/NoteEditor';
 import StickyNoteCard from './components/StickyNoteCard';
 import SearchResults from './components/SearchResults';
-import CreateFolderModal from './components/CreateFolderModal';
-import CreateNoteModal from './components/CreateNoteModal';
-import CreateStickyNoteModal from './components/CreateStickyNoteModal';
-import EditFolderModal from './components/EditFolderModal';
-import DeleteConfirmModal from './components/DeleteConfirmModal';
-import SettingsPanel from './components/SettingsPanel';
-import ViewStickyNoteModal from './components/ViewStickyNoteModal';
+const CreateFolderModal = lazy(() => import('./components/CreateFolderModal'));
+const CreateNoteModal = lazy(() => import('./components/CreateNoteModal'));
+const CreateStickyNoteModal = lazy(() => import('./components/CreateStickyNoteModal'));
+const EditFolderModal = lazy(() => import('./components/EditFolderModal'));
+const DeleteConfirmModal = lazy(() => import('./components/DeleteConfirmModal'));
+const SettingsPanel = lazy(() => import('./components/SettingsPanel'));
+const ViewStickyNoteModal = lazy(() => import('./components/ViewStickyNoteModal'));
 
 export default function App() {
   /**
@@ -369,9 +369,12 @@ export default function App() {
    * Case-insensitive: both sides lowercased before comparison.
    * Returns [] when searchQuery is empty (the ternary short-circuit).
    */
-  const searchMatchingFolders = searchQuery.trim()
-    ? folders.filter(f => f.name.toLowerCase().includes(searchQuery.trim().toLowerCase()))
-    : [];
+  const searchMatchingFolders = useMemo(() =>
+    searchQuery.trim()
+      ? folders.filter(f => f.name.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+      : [],
+    [searchQuery, folders]
+  );
 
 
   /**
@@ -722,6 +725,8 @@ export default function App() {
       {/* Pattern: {showXxx && <XxxModal ... />}                                      */}
       {/* Or for ID-based: {deletingXxxId !== null && <DeleteConfirmModal ... />}     */}
 
+      <Suspense fallback={null}>
+
       {/* CREATE FOLDER — parentId=null for root, parentId=number for subfolder */}
       {showCreateFolder && (
         <CreateFolderModal
@@ -831,6 +836,8 @@ export default function App() {
           onClose={() => setShowSettings(false)}
         />
       )}
+
+      </Suspense>
 
     </div>
   );

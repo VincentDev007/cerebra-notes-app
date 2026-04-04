@@ -91,8 +91,8 @@ export function useNotes(folderId: number | null) {
    */
   const create = async (title: string, content?: string) => {
     if (folderId === null) return;
-    await createNote({ title, content, folder_id: folderId });
-    await fetchNotes();  // Refresh the list to show the new note
+    const newNote = await createNote({ title, content, folder_id: folderId });
+    if (newNote) setNotes(prev => [newNote, ...prev]);
   };
 
   /**
@@ -101,8 +101,8 @@ export function useNotes(folderId: number | null) {
    * Called from NoteEditor on Save.
    */
   const update = async (id: number, input: { title?: string; content?: string }) => {
-    await updateNote(id, input);
-    await fetchNotes();  // Re-fetch so modified_at and card previews update
+    const updatedNote = await updateNote(id, input);
+    if (updatedNote) setNotes(prev => prev.map(n => n.id === id ? updatedNote : n));
   };
 
   /**
@@ -111,7 +111,7 @@ export function useNotes(folderId: number | null) {
    */
   const remove = async (id: number) => {
     await deleteNote(id);
-    await fetchNotes();  // Remove the deleted note from the displayed list
+    setNotes(prev => prev.filter(n => n.id !== id));
   };
 
   /**

@@ -52,6 +52,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { Note } from '../types/electron';
+import { formatDate } from '../utils/dateFormat';
 import DeleteConfirmModal from './DeleteConfirmModal';
 
 interface Props {
@@ -60,15 +61,6 @@ interface Props {
     onBack: () => void;   // Navigate back to NoteList
     onSave: (id: number, input: { title?: string; content?: string }) => void;
     onDelete: (id: number) => void;
-}
-
-/** Formats ISO 8601 date string to "Jan 15, 2024" */
-function formatDate(isoDate: string): string {
-    return new Date(isoDate).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
 }
 
 export default function NoteEditor({ note, folderName, onBack, onSave, onDelete }: Props) {

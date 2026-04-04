@@ -34,8 +34,9 @@
  * This allows instant light/dark mode switching without component changes.
  */
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import type { Note } from '../types/electron';
+import { formatDate } from '../utils/dateFormat';
 
 interface Props {
   note: Note;
@@ -43,18 +44,6 @@ interface Props {
   onDelete: () => void;   // Called when the delete button is clicked
 }
 
-/**
- * formatDate() — formats an ISO 8601 date string to a human-readable short date.
- * Input:  "2024-01-15T10:30:00.000Z"
- * Output: "Jan 15, 2024"
- */
-function formatDate(isoDate: string): string {
-  return new Date(isoDate).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 /**
  * getPreview() — truncates note content for the card preview.
@@ -69,7 +58,7 @@ function getPreview(content: string, maxLength = 80): string {
   return trimmed.length <= maxLength ? trimmed : trimmed.substring(0, maxLength) + '...';
 }
 
-export default function NoteCard({ note, onClick, onDelete }: Props) {
+export default memo(function NoteCard({ note, onClick, onDelete }: Props) {
   // hovered drives the lift animation and delete button visibility
   const [hovered, setHovered] = useState(false);
 
@@ -128,4 +117,4 @@ export default function NoteCard({ note, onClick, onDelete }: Props) {
       </div>
     </div>
   );
-}
+});
