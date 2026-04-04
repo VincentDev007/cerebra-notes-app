@@ -40,9 +40,11 @@ export const createNote = (input: CreateNoteInput): Note => {
     }
 
     const now = new Date().toISOString();
-    const result = stmtCreateNote.run(input.title.trim(), input.content ?? '', input.folder_id, now, now);
+    const title = input.title.trim();
+    const content = input.content ?? '';
+    const result = stmtCreateNote.run(title, content, input.folder_id, now, now);
 
-    return getNoteById(result.lastInsertRowid as number) as Note;
+    return { id: result.lastInsertRowid as number, title, content, folder_id: input.folder_id, created_at: now, modified_at: now };
   } catch (error) {
     console.error('Error creating note:', error);
     throw error;
@@ -70,7 +72,7 @@ export const updateNote = (id: number, input: UpdateNoteInput): Note | undefined
 
     stmtUpdateNote.run(title, content, now, id);
 
-    return getNoteById(id);
+    return { ...existing, title, content, modified_at: now };
   } catch (error) {
     console.error(`Error updating note with id ${id}:`, error);
     throw error;

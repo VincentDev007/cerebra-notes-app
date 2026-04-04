@@ -357,8 +357,12 @@ export default function App() {
       return;
     }
     const timer = setTimeout(async () => {
-      const results = await searchNotes(searchQuery.trim());
-      setSearchResultNotes(results);
+      try {
+        const results = await searchNotes(searchQuery.trim());
+        setSearchResultNotes(results);
+      } catch {
+        setSearchResultNotes([]);
+      }
     }, 300);
     return () => clearTimeout(timer);  // Cancel previous timer on re-run
   }, [searchQuery]);
@@ -369,12 +373,10 @@ export default function App() {
    * Case-insensitive: both sides lowercased before comparison.
    * Returns [] when searchQuery is empty (the ternary short-circuit).
    */
-  const searchMatchingFolders = useMemo(() =>
-    searchQuery.trim()
-      ? folders.filter(f => f.name.toLowerCase().includes(searchQuery.trim().toLowerCase()))
-      : [],
-    [searchQuery, folders]
-  );
+  const searchMatchingFolders = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return q ? folders.filter(f => f.name.toLowerCase().includes(q)) : [];
+  }, [searchQuery, folders]);
 
 
   /**

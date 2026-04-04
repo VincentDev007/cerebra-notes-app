@@ -46,9 +46,11 @@ export const createFolder = (input: CreateFolderInput): Folder => {
     }
 
     const now = new Date().toISOString();
-    const result = stmtCreateFolder.run(input.name.trim(), input.parent_id ?? null, now, now);
+    const name = input.name.trim();
+    const parent_id = input.parent_id ?? null;
+    const result = stmtCreateFolder.run(name, parent_id, now, now);
 
-    return getFolderById(result.lastInsertRowid as number) as Folder;
+    return { id: result.lastInsertRowid as number, name, parent_id, created_at: now, modified_at: now };
   } catch (error) {
     console.error('Error creating folder:', error);
     throw error;

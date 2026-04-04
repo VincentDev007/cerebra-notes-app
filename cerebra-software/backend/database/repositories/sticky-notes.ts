@@ -44,9 +44,11 @@ export const createStickyNote = (input: CreateStickyNoteInput): StickyNote => {
     }
 
     const now = new Date().toISOString();
-    const result = stmtCreateStickyNote.run(input.title?.trim() ?? 'Quick Note', input.content.trim(), now, now);
+    const title = input.title?.trim() ?? 'Quick Note';
+    const content = input.content.trim();
+    const result = stmtCreateStickyNote.run(title, content, now, now);
 
-    return getStickyNoteById(result.lastInsertRowid as number) as StickyNote;
+    return { id: result.lastInsertRowid as number, title, content, created_at: now, modified_at: now };
   } catch (error) {
     console.error('Error creating sticky note:', error);
     throw error;
@@ -74,7 +76,7 @@ export const updateStickyNote = (id: number, input: UpdateStickyNoteInput): Stic
 
     stmtUpdateStickyNote.run(title, content, now, id);
 
-    return getStickyNoteById(id);
+    return { ...existing, title, content, modified_at: now };
   } catch (error) {
     console.error(`Error updating sticky note with id ${id}:`, error);
     throw error;

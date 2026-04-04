@@ -102,8 +102,23 @@ export function useFolders() {
    * Partial input: only send the fields you want to change.
    */
   const update = async (id: number, input: { name?: string; parent_id?: number | null }) => {
+    const oldFolder = folders.find(f => f.id === id);
     const updatedFolder = await updateFolder(id, input);
-    if (updatedFolder) setFolders(prev => prev.map(f => f.id === id ? updatedFolder : f).sort((a, b) => a.name.localeCompare(b.name)));
+    if (updatedFolder) {
+      const nameChanged = updatedFolder.name !== oldFolder?.name;
+      setFolders(prev => {
+        const next = prev.map(f => f.id === id ? updatedFolder : f);
+        return nameChanged ? next.sort((a, b) => a.name.localeCompare(b.name)) : next;
+      });
+      if (input.parent_id !== undefined && input.parent_id !== oldFolder?.parent_id) {
+        setItemCounts(prev => {
+          const next = { ...prev };
+          if (oldFolder?.parent_id) next[oldFolder.parent_id] = Math.max(0, (next[oldFolder.parent_id] ?? 1) - 1);
+          if (input.parent_id) next[input.parent_id] = (next[input.parent_id] ?? 0) + 1;
+          return next;
+        });
+      }
+    }
   };
 
   /**

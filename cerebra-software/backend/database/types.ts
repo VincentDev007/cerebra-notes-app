@@ -104,7 +104,7 @@ export interface CreateStickyNoteInput {
 
 export interface UpdateStickyNoteInput {
   title?: string;
-  content: string;
+  content?: string;
 }
 
 
