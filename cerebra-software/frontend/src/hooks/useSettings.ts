@@ -19,7 +19,7 @@ export function useSettings() {
 
   const updateSetting = async (key: string, value: string) => {
     await setSetting(key, value);
-    setSettings(prev => ({ ...prev, [key]: value }));
+    setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
   return { settings, loading, updateSetting };

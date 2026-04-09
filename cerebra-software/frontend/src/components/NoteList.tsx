@@ -19,7 +19,20 @@ interface Props {
   onSubfolderDelete: (id: number) => void;
 }
 
-export default function NoteList({ folder, notes, subfolders, itemCounts = {}, onBack, onNoteClick, onNoteDelete, onAddNote, onAddFolder, onSubfolderSelect, onSubfolderEdit, onSubfolderDelete }: Props) {
+export default function NoteList({
+  folder,
+  notes,
+  subfolders,
+  itemCounts = {},
+  onBack,
+  onNoteClick,
+  onNoteDelete,
+  onAddNote,
+  onAddFolder,
+  onSubfolderSelect,
+  onSubfolderEdit,
+  onSubfolderDelete,
+}: Props) {
   return (
     <div>
       <div
@@ -36,7 +49,10 @@ export default function NoteList({ folder, notes, subfolders, itemCounts = {}, o
             >
               <ArrowLeft size={16} />
             </button>
-            <h1 className="text-3xl font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+            <h1
+              className="text-3xl font-bold flex items-center gap-2"
+              style={{ color: 'var(--text-primary)' }}
+            >
               <Folder size={28} style={{ color: 'var(--accent-blue)' }} /> {folder.name}
             </h1>
           </div>
@@ -65,24 +81,39 @@ export default function NoteList({ folder, notes, subfolders, itemCounts = {}, o
 
       <div
         className="rounded-xl p-6 mb-5 transition-colors duration-300"
-        style={{ background: 'var(--bg-secondary)', minHeight: '300px', boxShadow: 'var(--card-shadow-sm)' }}
+        style={{
+          background: 'var(--bg-secondary)',
+          minHeight: '300px',
+          boxShadow: 'var(--card-shadow-sm)',
+        }}
       >
-        <h3 className="text-lg font-semibold mb-5 pb-2 border-b-2" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
+        <h3
+          className="text-lg font-semibold mb-5 pb-2 border-b-2"
+          style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+        >
           Notes
         </h3>
 
         {notes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <FileText size={56} className="mb-5 opacity-50" style={{ color: 'var(--text-secondary)' }} />
-            <h4 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>No notes yet</h4>
-            <p className="text-sm" style={{ color: 'var(--text-light)' }}>Add your first note to this folder</p>
+            <FileText
+              size={56}
+              className="mb-5 opacity-50"
+              style={{ color: 'var(--text-secondary)' }}
+            />
+            <h4 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>
+              No notes yet
+            </h4>
+            <p className="text-sm" style={{ color: 'var(--text-light)' }}>
+              Add your first note to this folder
+            </p>
           </div>
         ) : (
           <div
             className="grid gap-5"
             style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}
           >
-            {notes.map(note => (
+            {notes.map((note) => (
               <NoteCard
                 key={note.id}
                 note={note}
@@ -98,12 +129,18 @@ export default function NoteList({ folder, notes, subfolders, itemCounts = {}, o
         className="rounded-xl p-6 mb-5 transition-colors duration-300"
         style={{ background: 'var(--bg-secondary)', boxShadow: 'var(--card-shadow-sm)' }}
       >
-        <h3 className="text-lg font-semibold mb-5 pb-2 border-b-2" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}>
+        <h3
+          className="text-lg font-semibold mb-5 pb-2 border-b-2"
+          style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+        >
           Subfolders
         </h3>
 
         {subfolders.length === 0 ? (
-          <div className="flex items-center gap-2 py-4 px-3" style={{ color: 'var(--text-secondary)' }}>
+          <div
+            className="flex items-center gap-2 py-4 px-3"
+            style={{ color: 'var(--text-secondary)' }}
+          >
             <Folder size={16} />
             <span className="text-sm">No subfolders yet</span>
           </div>
@@ -112,7 +149,7 @@ export default function NoteList({ folder, notes, subfolders, itemCounts = {}, o
             className="grid gap-5"
             style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}
           >
-            {subfolders.map(subfolder => (
+            {subfolders.map((subfolder) => (
               <FolderCard
                 key={subfolder.id}
                 folder={subfolder}

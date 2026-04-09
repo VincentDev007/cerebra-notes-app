@@ -2,6 +2,14 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import { initializeDatabase } from '../backend/database/init';
 import { closeDatabase } from '../backend/database/connection';
+import type {
+  CreateFolderInput,
+  UpdateFolderInput,
+  CreateNoteInput,
+  UpdateNoteInput,
+  CreateStickyNoteInput,
+  UpdateStickyNoteInput,
+} from '../backend/database/types';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -12,8 +20,8 @@ function createWindow() {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
-      preload: path.join(__dirname, 'preload.js')
-    }
+      preload: path.join(__dirname, 'preload.js'),
+    },
   });
 
   if (process.env.NODE_ENV !== 'production') {
@@ -27,7 +35,8 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
+// Imported after DB init — module-level db.prepare() calls require an open connection.
+app.whenReady().then(async () => {
   try {
     initializeDatabase();
   } catch (error) {
@@ -36,11 +45,21 @@ app.whenReady().then(() => {
     return;
   }
 
-  const { getAllFolders, createFolder, updateFolder, deleteFolder, getFolderItemCounts } = require('../backend/database/repositories/folders');
-  const { getNotesByFolder, createNote, updateNote, deleteNote, searchNotes } = require('../backend/database/repositories/notes');
-  const { getAllStickyNotes, createStickyNote, updateStickyNote, deleteStickyNote, searchStickyNotes } = require('../backend/database/repositories/sticky-notes');
-  const { getSetting, setSetting, getAllSettings } = require('../backend/database/repositories/settings');
+  const { getAllFolders, createFolder, updateFolder, deleteFolder, getFolderItemCounts } =
+    await import('../backend/database/repositories/folders.js');
+  const { getNotesByFolder, createNote, updateNote, deleteNote, searchNotes } =
+    await import('../backend/database/repositories/notes.js');
+  const {
+    getAllStickyNotes,
+    createStickyNote,
+    updateStickyNote,
+    deleteStickyNote,
+    searchStickyNotes,
+  } = await import('../backend/database/repositories/sticky-notes.js');
+  const { getSetting, setSetting, getAllSettings } =
+    await import('../backend/database/repositories/settings.js');
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handle = (channel: string, fn: (...args: any[]) => any) => {
     ipcMain.handle(channel, async (_event, ...args) => {
       try {
@@ -53,20 +72,22 @@ app.whenReady().then(() => {
   };
 
   handle('folders:getAll', () => getAllFolders());
-  handle('folders:create', (input: any) => createFolder(input));
-  handle('folders:update', (id: number, input: any) => updateFolder(id, input));
+  handle('folders:create', (input: CreateFolderInput) => createFolder(input));
+  handle('folders:update', (id: number, input: UpdateFolderInput) => updateFolder(id, input));
   handle('folders:delete', (id: number) => deleteFolder(id));
   handle('folders:getItemCounts', () => getFolderItemCounts());
 
   handle('notes:getByFolder', (folderId: number) => getNotesByFolder(folderId));
-  handle('notes:create', (input: any) => createNote(input));
-  handle('notes:update', (id: number, input: any) => updateNote(id, input));
+  handle('notes:create', (input: CreateNoteInput) => createNote(input));
+  handle('notes:update', (id: number, input: UpdateNoteInput) => updateNote(id, input));
   handle('notes:delete', (id: number) => deleteNote(id));
   handle('notes:search', (query: string) => searchNotes(query));
 
   handle('sticky-notes:getAll', () => getAllStickyNotes());
-  handle('sticky-notes:create', (input: any) => createStickyNote(input));
-  handle('sticky-notes:update', (id: number, input: any) => updateStickyNote(id, input));
+  handle('sticky-notes:create', (input: CreateStickyNoteInput) => createStickyNote(input));
+  handle('sticky-notes:update', (id: number, input: UpdateStickyNoteInput) =>
+    updateStickyNote(id, input)
+  );
   handle('sticky-notes:delete', (id: number) => deleteStickyNote(id));
   handle('sticky-notes:search', (query: string) => searchStickyNotes(query));
 

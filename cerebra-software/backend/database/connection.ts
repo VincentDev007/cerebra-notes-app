@@ -23,12 +23,12 @@ const connectDatabase = (dbPath: string): Database.Database => {
     ensureDbDirectory(dbPath);
 
     const db = new Database(dbPath, {
-      verbose: process.env.NODE_ENV === 'development' ? console.log : undefined 
+      verbose: process.env.NODE_ENV === 'development' ? console.log : undefined,
     });
-    
-    db.pragma('foreign_keys = ON'); 
+
+    db.pragma('foreign_keys = ON');
     db.pragma('journal_mode = WAL');
-    
+
     console.log(`Database initialized at: ${dbPath}`);
 
     return db;
@@ -38,16 +38,13 @@ const connectDatabase = (dbPath: string): Database.Database => {
   }
 };
 
-// call in main.ts when app gets closed
 export const closeDatabase = (): void => {
   if (db.open) {
     db.close();
     console.log('Database connection closed.');
   }
-}
+};
 
 export const dbPath = getDbPath();
 
 export const db = connectDatabase(dbPath);
-
-

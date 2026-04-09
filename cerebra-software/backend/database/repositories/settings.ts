@@ -1,7 +1,9 @@
-import { db } from "../connection";
-import { Setting } from "../types";
+import { db } from '../connection';
+import { Setting } from '../types';
 
-const stmtSetSetting = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
+const stmtSetSetting = db.prepare(
+  'INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value'
+);
 const stmtGetAllSettings = db.prepare('SELECT key, value FROM settings');
 
 const VALID_SETTINGS_KEYS_VALUES: Record<string, string[]> = {
@@ -23,7 +25,6 @@ const loadCache = (): Record<string, string> => {
   }
   return cache;
 };
-
 
 export const getSetting = (key: string): string | null => {
   try {

@@ -9,11 +9,9 @@
     "dist/electron/**/*",
     "dist/backend/**/*",
     "package.json",
-    "node_modules/better-sqlite3/**/*"      
-  ],
-  "asarUnpack": [                        
     "node_modules/better-sqlite3/**/*"
   ],
+  "asarUnpack": ["node_modules/better-sqlite3/**/*"],
   "win": {
     "target": "nsis",
     "icon": "frontend/public/icon.ico"

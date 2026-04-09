@@ -1,13 +1,22 @@
-import { db } from "../connection";
-import { Note, CreateNoteInput, UpdateNoteInput } from "../types";
+import { db } from '../connection';
+import { Note, CreateNoteInput, UpdateNoteInput } from '../types';
 
-const stmtGetNotesByFolder = db.prepare('SELECT id, title, content, folder_id, created_at, modified_at FROM notes WHERE folder_id = ? ORDER BY modified_at DESC');
-const stmtGetNoteById = db.prepare('SELECT id, title, content, folder_id, created_at, modified_at FROM notes WHERE id = ?');
-const stmtCreateNote = db.prepare('INSERT INTO notes (title, content, folder_id, created_at, modified_at) VALUES (?, ?, ?, ?, ?)');
-const stmtUpdateNote = db.prepare('UPDATE notes SET title = ?, content = ?, modified_at = ? WHERE id = ?');
+const stmtGetNotesByFolder = db.prepare(
+  'SELECT id, title, content, folder_id, created_at, modified_at FROM notes WHERE folder_id = ? ORDER BY modified_at DESC'
+);
+const stmtGetNoteById = db.prepare(
+  'SELECT id, title, content, folder_id, created_at, modified_at FROM notes WHERE id = ?'
+);
+const stmtCreateNote = db.prepare(
+  'INSERT INTO notes (title, content, folder_id, created_at, modified_at) VALUES (?, ?, ?, ?, ?)'
+);
+const stmtUpdateNote = db.prepare(
+  'UPDATE notes SET title = ?, content = ?, modified_at = ? WHERE id = ?'
+);
 const stmtDeleteNote = db.prepare('DELETE FROM notes WHERE id = ?');
-const stmtSearchNotes = db.prepare('SELECT notes.id, notes.title, notes.content, notes.folder_id, notes.created_at, notes.modified_at FROM notes_fts JOIN notes ON notes.id = notes_fts.rowid WHERE notes_fts MATCH ? ORDER BY rank');
-
+const stmtSearchNotes = db.prepare(
+  'SELECT notes.id, notes.title, notes.content, notes.folder_id, notes.created_at, notes.modified_at FROM notes_fts JOIN notes ON notes.id = notes_fts.rowid WHERE notes_fts MATCH ? ORDER BY rank'
+);
 
 export const getNotesByFolder = (folderId: number): Note[] => {
   try {
@@ -44,7 +53,14 @@ export const createNote = (input: CreateNoteInput): Note => {
     const content = input.content ?? '';
     const result = stmtCreateNote.run(title, content, input.folder_id, now, now);
 
-    return { id: result.lastInsertRowid as number, title, content, folder_id: input.folder_id, created_at: now, modified_at: now };
+    return {
+      id: result.lastInsertRowid as number,
+      title,
+      content,
+      folder_id: input.folder_id,
+      created_at: now,
+      modified_at: now,
+    };
   } catch (error) {
     console.error('Error creating note:', error);
     throw error;
@@ -102,7 +118,14 @@ export const searchNotes = (query: string): Note[] => {
       throw new Error('Search query cannot exceed 500 characters');
     }
 
-    return stmtSearchNotes.all(query.trim()) as Note[];
+    try {
+      return stmtSearchNotes.all(query.trim()) as Note[];
+    } catch (ftsError) {
+      if (ftsError instanceof Error && ftsError.message.startsWith('fts5:')) {
+        return [];
+      }
+      throw ftsError;
+    }
   } catch (error) {
     console.error(`Error searching notes with query "${query}":`, error);
     throw error;

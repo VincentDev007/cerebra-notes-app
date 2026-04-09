@@ -18,7 +18,7 @@ export function useStickyNotes() {
       const data = await getStickyNotes();
       setStickyNotes(data);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Failed to load sticky notes');
     } finally {
       setLoading(false);
@@ -31,17 +31,17 @@ export function useStickyNotes() {
 
   const create = async (content: string, title?: string) => {
     const newNote = await createStickyNote({ title, content });
-    if (newNote) setStickyNotes(prev => [newNote, ...prev]);
+    if (newNote) setStickyNotes((prev) => [newNote, ...prev]);
   };
 
   const update = async (id: number, input: { title?: string; content?: string }) => {
     const updatedNote = await updateStickyNote(id, input);
-    if (updatedNote) setStickyNotes(prev => prev.map(n => n.id === id ? updatedNote : n));
+    if (updatedNote) setStickyNotes((prev) => prev.map((n) => (n.id === id ? updatedNote : n)));
   };
 
   const remove = async (id: number) => {
     await deleteStickyNote(id);
-    setStickyNotes(prev => prev.filter(n => n.id !== id));
+    setStickyNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
   return { stickyNotes, loading, error, create, update, remove };

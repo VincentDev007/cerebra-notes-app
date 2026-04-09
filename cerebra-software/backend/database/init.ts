@@ -9,7 +9,7 @@ const readSchema = (): string => {
   } catch (error) {
     console.error('Error reading database schema:', error);
     throw error;
-  }  
+  }
 };
 
 const createTables = (): void => {
@@ -26,6 +26,7 @@ const createTables = (): void => {
   }
 };
 
+// Seeds FTS indexes from existing rows — no-op on first run when tables are empty
 const populateFts = (): void => {
   try {
     db.exec(`
@@ -72,9 +73,11 @@ const initializeDefaultSettings = (): void => {
 
 const isDatabaseInitialized = (): boolean => {
   try {
-    const result = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='folders'").get();
+    const result = db
+      .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='folders'")
+      .get();
     return result !== undefined;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -100,18 +103,3 @@ export const initializeDatabase = (): void => {
     throw error;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

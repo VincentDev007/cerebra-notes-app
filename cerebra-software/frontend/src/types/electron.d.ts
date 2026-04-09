@@ -32,15 +32,25 @@ export interface ElectronAPI {
   folders: {
     getAll: () => Promise<IpcResponse<Folder[]>>;
     create: (input: { name: string; parent_id?: number | null }) => Promise<IpcResponse<Folder>>;
-    update: (id: number, input: { name?: string; parent_id?: number | null }) => Promise<IpcResponse<Folder | undefined>>;
+    update: (
+      id: number,
+      input: { name?: string; parent_id?: number | null }
+    ) => Promise<IpcResponse<Folder | undefined>>;
     delete: (id: number) => Promise<IpcResponse<boolean>>;
     getItemCounts: () => Promise<IpcResponse<Record<number, number>>>;
   };
 
   notes: {
     getByFolder: (folderId: number) => Promise<IpcResponse<Note[]>>;
-    create: (input: { title: string; content?: string; folder_id: number }) => Promise<IpcResponse<Note>>;
-    update: (id: number, input: { title?: string; content?: string }) => Promise<IpcResponse<Note | undefined>>;
+    create: (input: {
+      title: string;
+      content?: string;
+      folder_id: number;
+    }) => Promise<IpcResponse<Note>>;
+    update: (
+      id: number,
+      input: { title?: string; content?: string }
+    ) => Promise<IpcResponse<Note | undefined>>;
     delete: (id: number) => Promise<IpcResponse<boolean>>;
     search: (query: string) => Promise<IpcResponse<Note[]>>;
   };
@@ -48,7 +58,10 @@ export interface ElectronAPI {
   stickyNotes: {
     getAll: () => Promise<IpcResponse<StickyNote[]>>;
     create: (input: { title?: string; content: string }) => Promise<IpcResponse<StickyNote>>;
-    update: (id: number, input: { title?: string; content?: string }) => Promise<IpcResponse<StickyNote | undefined>>;
+    update: (
+      id: number,
+      input: { title?: string; content?: string }
+    ) => Promise<IpcResponse<StickyNote | undefined>>;
     delete: (id: number) => Promise<IpcResponse<boolean>>;
   };
 

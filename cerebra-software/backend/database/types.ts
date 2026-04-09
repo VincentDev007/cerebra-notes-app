@@ -1,120 +1,62 @@
 export interface Folder {
-    id: number;
-    name: string;
-    parent_id: number | null;  // null = root folder, number = subfolder
-    created_at: string;         // ISO 8601 string
-    modified_at: string;        // ISO 8601 string — updated on every edit
+  id: number;
+  name: string;
+  parent_id: number | null; // null = root folder
+  created_at: string;
+  modified_at: string;
 }
 
-/**
- * Note — represents a row from the `notes` table.
- *
- * folder_id references the parent folder — required (no orphan notes).
- * content defaults to '' (empty string) if not provided at creation.
- */
 export interface Note {
   id: number;
   title: string;
-  content: string;      // Empty string if no content yet (NOT NULL in schema)
-  folder_id: number;    // FK → folders.id (ON DELETE CASCADE)
+  content: string; // defaults to '' if not provided
+  folder_id: number; // FK → folders.id (cascade delete)
   created_at: string;
   modified_at: string;
 }
 
-/**
- * StickyNote — represents a row from the `sticky_notes` table.
- *
- * Unlike Note, sticky notes are NOT associated with any folder.
- * They are a global quick-capture mechanism.
- * title defaults to 'Quick Note' in the database schema.
- */
 export interface StickyNote {
   id: number;
-  title: string;    // Defaults to 'Quick Note'
-  content: string;  // Required (NOT NULL in schema)
+  title: string; // defaults to 'Quick Note'
+  content: string;
   created_at: string;
   modified_at: string;
 }
 
-/**
- * Setting — represents a row from the `settings` table.
- *
- * The settings table is a flat key-value store.
- * key is the PRIMARY KEY (unique, no duplicates).
- * All values are strings — booleans are 'true'/'false', enums are plain strings.
- */
 export interface Setting {
   key: string;
   value: string;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// INPUT TYPES — Used as parameters for create/update functions
-// ─────────────────────────────────────────────────────────────────
+// Input types for create/update operations
 
-/**
- * CreateFolderInput — data needed to create a new folder.
- * parent_id is optional because root folders don't have a parent.
- * `undefined` and `null` both result in NULL in the database.
- */
 export interface CreateFolderInput {
   name: string;
-  parent_id?: number | null;  // Omit or set null for root folders
+  parent_id?: number | null;
 }
 
-/**
- * UpdateFolderInput — all fields optional for partial updates.
- * The update function reads the existing record and merges in only the provided fields.
- * This avoids requiring the caller to re-send unchanged data.
- */
 export interface UpdateFolderInput {
   name?: string;
   parent_id?: number | null;
 }
 
-/**
- * CreateNoteInput — data needed to create a new note.
- * content is optional — defaults to '' (empty string) in createNote().
- * folder_id is required — notes must belong to a folder.
- */
 export interface CreateNoteInput {
   title: string;
-  content?: string;   // Optional — defaults to empty string
-  folder_id: number;  // Required — which folder this note belongs to
+  content?: string;
+  folder_id: number;
 }
 
-/**
- * UpdateNoteInput — partial update for notes.
- * Both fields are optional — you can update just the title, just the content, or both.
- */
 export interface UpdateNoteInput {
   title?: string;
   content?: string;
 }
 
-/**
- * CreateStickyNoteInput — data to create a sticky note.
- * title is optional — if omitted, the DB default 'Quick Note' is used.
- * content is required (the actual note text).
- */
 export interface CreateStickyNoteInput {
-  title?: string;   // Optional — defaults to 'Quick Note'
-  content: string;  // Required — must have content
+  title?: string; // defaults to 'Quick Note'
+  content: string;
 }
 
 export interface UpdateStickyNoteInput {
   title?: string;
   content?: string;
 }
-
-
-
-
-
-
-
-
-
-
-
-

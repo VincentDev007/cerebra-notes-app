@@ -4,22 +4,22 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  
+
   base: './',
-  
+
   build: {
     outDir: '../dist/frontend',
-    emptyOutDir: true
+    emptyOutDir: true,
   },
-  
+
   server: {
     port: 5173,
-    strictPort: true
+    strictPort: true,
   },
-  
+
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
-    }
-  }
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
 });

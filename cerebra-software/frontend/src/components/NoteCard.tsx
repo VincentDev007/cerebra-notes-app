@@ -34,7 +34,10 @@ export default memo(function NoteCard({ note, onClick, onDelete }: Props) {
       <button
         className="absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center text-white text-sm transition-all duration-200"
         style={{ background: 'var(--btn-delete-bg)', opacity: hovered ? 1 : 0 }}
-        onClick={(e) => { e.stopPropagation(); onDelete(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
         title="Delete note"
       >
         <Trash2 size={14} />
@@ -44,7 +47,10 @@ export default memo(function NoteCard({ note, onClick, onDelete }: Props) {
         <FileText size={48} style={{ color: 'var(--accent-blue)' }} />
       </div>
 
-      <div className="text-base font-semibold text-center break-words w-full" style={{ color: 'var(--text-primary)' }}>
+      <div
+        className="text-base font-semibold text-center break-words w-full"
+        style={{ color: 'var(--text-primary)' }}
+      >
         {note.title}
       </div>
 
@@ -63,7 +69,10 @@ export default memo(function NoteCard({ note, onClick, onDelete }: Props) {
         {getPreview(note.content)}
       </div>
 
-      <div className="text-xs uppercase tracking-wide font-semibold" style={{ color: 'var(--text-light)' }}>
+      <div
+        className="text-xs uppercase tracking-wide font-semibold"
+        style={{ color: 'var(--text-light)' }}
+      >
         Created {formatDate(note.created_at)}
       </div>
     </div>

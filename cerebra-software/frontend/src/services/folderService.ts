@@ -6,10 +6,7 @@ export async function getFolders(): Promise<Folder[]> {
   return data;
 }
 
-export async function createFolder(
-  name: string,
-  parent_id?: number | null
-): Promise<Folder> {
+export async function createFolder(name: string, parent_id?: number | null): Promise<Folder> {
   const { data, error } = await window.electronAPI.folders.create({ name, parent_id });
   if (error) throw new Error(error);
   return data;

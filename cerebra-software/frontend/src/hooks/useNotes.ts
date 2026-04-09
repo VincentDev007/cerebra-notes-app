@@ -23,7 +23,7 @@ export function useNotes(folderId: number | null) {
       const data = await getNotesByFolder(folderId);
       setNotes(data);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Failed to load notes');
     } finally {
       setLoading(false);
@@ -37,17 +37,17 @@ export function useNotes(folderId: number | null) {
   const create = async (title: string, content?: string) => {
     if (folderId === null) return;
     const newNote = await createNote({ title, content, folder_id: folderId });
-    if (newNote) setNotes(prev => [newNote, ...prev]);
+    if (newNote) setNotes((prev) => [newNote, ...prev]);
   };
 
   const update = async (id: number, input: { title?: string; content?: string }) => {
     const updatedNote = await updateNote(id, input);
-    if (updatedNote) setNotes(prev => prev.map(n => n.id === id ? updatedNote : n));
+    if (updatedNote) setNotes((prev) => prev.map((n) => (n.id === id ? updatedNote : n)));
   };
 
   const remove = async (id: number) => {
     await deleteNote(id);
-    setNotes(prev => prev.filter(n => n.id !== id));
+    setNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
   const search = async (query: string): Promise<Note[]> => {

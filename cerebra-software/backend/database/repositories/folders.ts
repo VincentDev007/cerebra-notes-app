@@ -1,10 +1,18 @@
 import { db } from '../connection';
 import { Folder, CreateFolderInput, UpdateFolderInput } from '../types';
 
-const stmtGetAllFolders = db.prepare('SELECT id, name, parent_id, created_at, modified_at FROM folders ORDER BY name ASC');
-const stmtGetFolderById = db.prepare('SELECT id, name, parent_id, created_at, modified_at FROM folders WHERE id = ?');
-const stmtCreateFolder = db.prepare('INSERT INTO folders (name, parent_id, created_at, modified_at) VALUES (?, ?, ?, ?)');
-const stmtUpdateFolder = db.prepare('UPDATE folders SET name = ?, parent_id = ?, modified_at = ? WHERE id = ?');
+const stmtGetAllFolders = db.prepare(
+  'SELECT id, name, parent_id, created_at, modified_at FROM folders ORDER BY name ASC'
+);
+const stmtGetFolderById = db.prepare(
+  'SELECT id, name, parent_id, created_at, modified_at FROM folders WHERE id = ?'
+);
+const stmtCreateFolder = db.prepare(
+  'INSERT INTO folders (name, parent_id, created_at, modified_at) VALUES (?, ?, ?, ?)'
+);
+const stmtUpdateFolder = db.prepare(
+  'UPDATE folders SET name = ?, parent_id = ?, modified_at = ? WHERE id = ?'
+);
 const stmtDeleteFolder = db.prepare('DELETE FROM folders WHERE id = ?');
 const stmtGetFolderItemCounts = db.prepare(`
   SELECT f.id,
@@ -13,7 +21,6 @@ const stmtGetFolderItemCounts = db.prepare(`
   LEFT JOIN (SELECT folder_id, COUNT(*) AS note_count FROM notes GROUP BY folder_id) nc ON f.id = nc.folder_id
   LEFT JOIN (SELECT parent_id, COUNT(*) AS folder_count FROM folders GROUP BY parent_id) fc ON f.id = fc.parent_id
 `);
-
 
 export const getAllFolders = (): Folder[] => {
   try {
@@ -50,7 +57,13 @@ export const createFolder = (input: CreateFolderInput): Folder => {
     const parent_id = input.parent_id ?? null;
     const result = stmtCreateFolder.run(name, parent_id, now, now);
 
-    return { id: result.lastInsertRowid as number, name, parent_id, created_at: now, modified_at: now };
+    return {
+      id: result.lastInsertRowid as number,
+      name,
+      parent_id,
+      created_at: now,
+      modified_at: now,
+    };
   } catch (error) {
     console.error('Error creating folder:', error);
     throw error;
