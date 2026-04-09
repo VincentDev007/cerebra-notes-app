@@ -12,6 +12,24 @@ A local-first note taking app built with Electron.
 - Persistent tabs
 - Settings
 
+## Download
+Get the latest release [here](https://github.com/your-username/cerebra/releases).
+
+## Running from Source
+1. Clone the repo
+2. Navigate to the project folder
+   ```
+   cd cerebra-software
+   ```
+3. Install dependencies
+   ```
+   npm install
+   ```
+4. Start the app
+   ```
+   npm run dev
+   ```
+
 ## Tech Stack
 - Electron
 - React
