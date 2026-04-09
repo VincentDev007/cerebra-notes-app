@@ -1,5 +1,7 @@
 # Cerebra
 
+![version](https://img.shields.io/badge/version-0.5.0-blue)
+
 A local-first note taking app built with Electron.
 
 ## Features
