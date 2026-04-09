@@ -23,6 +23,6 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# Database (for now - we'll create a sample DB later)
+# Database
 *.db
 *.sqlite
