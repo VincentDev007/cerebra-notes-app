@@ -9,20 +9,26 @@ All notable changes to Cerebra will be documented here.
 - FTS5 full-text search across notes
 - Lucide icons replacing all emoji usage throughout the UI
 - Scrollable sidebar and back button navigation
-- Prettier config and ESLint config for consistent code formatting
+- ESLint and Prettier with lint/format scripts
 - Date formatting utility (`dateFormat.ts`)
 
 ### Changed
 - Rewrote IPC layer with structured error handling across all handlers
+- Replaced `any` types in all IPC handlers with proper input types
+- Converted `require()` calls in `electron/main.ts` to `await import()`
 - Optimized all database queries across notes, folders, sticky notes, and settings repositories
 - Eliminated redundant DB queries; frontend now filters in-memory where appropriate
 - Consolidated frontend services into hooks, removing standalone service files
 - Refactored `app.tsx` and all modal/card components for cleaner structure
-- Updated `tsconfig.json` across backend, electron, and frontend — removed deprecated `baseUrl`, unused aliases, and invalid project references
+- Upgraded `moduleResolution` to `node16` in electron and backend tsconfigs
+- Cleaned up comments across all source files
 
 ### Fixed
-- tsconfig errors causing CI build failures
-- CI working directory path issue
+- Packaged app not displaying UI — replaced `NODE_ENV` check with `app.isPackaged`
+- Frontend path resolution in packaged build pointing to wrong directory
+- `useFolders.remove` refetching entire folder list on delete
+- FTS5 parse errors returning a crash instead of empty results
+- Unused catch bindings across hooks and backend repositories
 
 ## [0.1.0] - 2026-03-22
 ### Added
