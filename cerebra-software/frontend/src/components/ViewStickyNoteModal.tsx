@@ -1,39 +1,5 @@
-/**
- * ViewStickyNoteModal COMPONENT — frontend/src/components/ViewStickyNoteModal.tsx
- *
- * PURPOSE:
- * Read-only modal for viewing the full content of a sticky note.
- * Opened when a sticky note card is clicked (from the homepage grid or sidebar).
- *
- * READ-ONLY (no editing):
- * Unlike NoteEditor, this modal has no edit mode.
- * Sticky notes can only be edited via the "update" function — currently,
- * editing is not exposed in the UI (the modal is view-only).
- * The UI only supports creating, viewing, and deleting sticky notes.
- *
- * FORMAT DIFFERENCE FROM OTHER MODALS:
- * The formatDate() here includes HOUR and MINUTE (not just date):
- *   { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }
- * Result: "Jan 15, 2024, 10:30 AM" — more precise timestamp for quick notes.
- * Other components only show the date (not the time).
- *
- * whitespace-pre-wrap:
- * The content paragraph uses `whitespace-pre-wrap` CSS class (tailwind).
- * This preserves newlines and spaces in the sticky note content.
- * Without it, all text would collapse into one block (HTML ignores whitespace by default).
- *
- * NO STATE:
- * This component has no local state (no editing, no form fields).
- * The only useEffect is the keyboard listener for Escape.
- * It's the simplest modal in the app.
- *
- * FOOTER:
- * The footer shows the creation timestamp AND a Close button.
- * This is the only modal where the footer has items on BOTH sides (justify-between).
- * Other modals have buttons aligned right (justify-end).
- */
-
 import { useEffect } from 'react';
+import { Pin, X } from 'lucide-react';
 import type { StickyNote } from '../types/electron';
 import { formatDateTime } from '../utils/dateFormat';
 
@@ -42,9 +8,7 @@ interface Props {
     onClose: () => void;
 }
 
-
 export default function ViewStickyNoteModal({ stickyNote, onClose }: Props) {
-    // Escape key → close the modal (same pattern as all other modals)
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose();
@@ -69,14 +33,14 @@ export default function ViewStickyNoteModal({ stickyNote, onClose }: Props) {
                     style={{ borderColor: 'var(--border-color)' }}
                 >
                     <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                        <span>📌</span> {stickyNote.title || 'Quick Note'}
+                        <Pin size={18} style={{ color: 'var(--accent-blue)' }} /> {stickyNote.title || 'Quick Note'}
                     </h2>
                     <button
-                        className="w-8 h-8 rounded-md flex items-center justify-center text-lg transition-colors hover:bg-gray-100"
+                        className="w-8 h-8 rounded-md flex items-center justify-center transition-colors hover:bg-gray-100"
                         style={{ color: 'var(--text-secondary)' }}
                         onClick={onClose}
                     >
-                        &times;
+                        <X size={16} />
                     </button>
                 </div>
 

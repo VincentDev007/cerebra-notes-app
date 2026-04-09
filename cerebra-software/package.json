@@ -3,37 +3,35 @@
   "version": "2.0.0",
   "description": "",
   "main": "dist/electron/electron/main.js",
-"scripts": {
-  "dev": "npm run build:backend && concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
-  "dev:vite": "cd frontend && vite",
-  "dev:electron": "tsc -p electron/tsconfig.json && electron .",
-  
-  "build": "npm run build:frontend && npm run build:electron && npm run build:backend",
-  "build:frontend": "cd frontend && vite build",
-  "build:electron": "tsc -p electron/tsconfig.json && cp backend/database/schema.sql dist/electron/backend/database/",
-  "build:backend": "tsc -p backend/tsconfig.json && mkdir -p dist/backend/database dist/electron/backend/database && cp backend/database/schema.sql dist/backend/database/ && cp backend/database/schema.sql dist/electron/backend/database/",
-  
-  "package:win": "npm run build && electron-builder --win",
-  "package:mac": "npm run build && electron-builder --mac",
-  "package:linux": "npm run build && electron-builder --linux",
-
-  "postinstall": "electron-builder install-app-deps", 
-  "rebuild": "electron-rebuild -f -w better-sqlite3"
-},
+  "scripts": {
+    "dev": "npm run build:backend && concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
+    "dev:vite": "cd frontend && vite",
+    "dev:electron": "tsc -p electron/tsconfig.json && electron .",
+    "build": "npm run build:frontend && npm run build:electron && npm run build:backend",
+    "build:frontend": "cd frontend && vite build",
+    "build:electron": "tsc -p electron/tsconfig.json && cp backend/database/schema.sql dist/electron/backend/database/",
+    "build:backend": "tsc -p backend/tsconfig.json && mkdir -p dist/backend/database dist/electron/backend/database && cp backend/database/schema.sql dist/backend/database/ && cp backend/database/schema.sql dist/electron/backend/database/",
+    "package:win": "npm run build && electron-builder --win",
+    "package:mac": "npm run build && electron-builder --mac",
+    "package:linux": "npm run build && electron-builder --linux",
+    "postinstall": "electron-builder install-app-deps",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^12.5.0",
+    "lucide-react": "^1.7.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@electron/rebuild": "^4.0.1",
     "@vitejs/plugin-react": "^5.1.2",
     "autoprefixer": "^10.4.23",
     "concurrently": "^9.2.1",
