@@ -15,4 +15,6 @@ jobs:
         with:
           node-version: 20
       - run: npm install
+        working-directory: cerebra-software
       - run: npm run build
+        working-directory: cerebra-software
