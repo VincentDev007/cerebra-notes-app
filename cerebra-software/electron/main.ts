@@ -24,10 +24,10 @@ function createWindow() {
     },
   });
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (!app.isPackaged) {
     mainWindow.loadURL('http://localhost:5173');
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/frontend/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../../frontend/index.html'));
   }
 
   mainWindow.on('closed', () => {
