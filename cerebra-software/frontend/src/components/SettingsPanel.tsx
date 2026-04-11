@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, X, Brain, Folder, FileText, Pin, Search } from 'lucide-react';
+import { Settings, X, Brain } from 'lucide-react';
 
 interface Props {
   settings: Record<string, string>;
@@ -211,64 +211,15 @@ export default function SettingsPanel({ settings, onUpdate, onClose }: Props) {
                 className="inline-block text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-5"
                 style={{ background: 'var(--accent-blue)' }}
               >
-                Version 2.0.0
+                Version 0.5.1
               </span>
 
               <p
-                className="text-sm mb-4"
+                className="text-sm"
                 style={{ color: 'var(--text-secondary)', lineHeight: '1.8' }}
               >
-                A powerful desktop note-taking application built with Electron, designed to help you
-                organize your thoughts, ideas, and projects efficiently.
+                A desktop note-taking app for organizing your thoughts, ideas, and projects.
               </p>
-
-              <div className="flex flex-col items-center gap-2 mb-4">
-                <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
-                  Features:
-                </p>
-                <div
-                  className="flex items-center gap-2 text-sm"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  <Folder size={14} /> Hierarchical folder organization
-                </div>
-                <div
-                  className="flex items-center gap-2 text-sm"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  <FileText size={14} /> Rich note editing
-                </div>
-                <div
-                  className="flex items-center gap-2 text-sm"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  <Pin size={14} /> Quick sticky notes
-                </div>
-                <div
-                  className="flex items-center gap-2 text-sm"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  <Search size={14} /> Full-text search
-                </div>
-              </div>
-
-              <div
-                className="rounded-lg p-5 mt-6 border text-left"
-                style={{ background: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
-              >
-                <p className="text-sm my-2" style={{ color: 'var(--text-primary)' }}>
-                  <strong style={{ color: 'var(--accent-blue)' }}>Project:</strong> CEREBRA Notes
-                  App
-                </p>
-                <p className="text-sm my-2" style={{ color: 'var(--text-primary)' }}>
-                  <strong style={{ color: 'var(--accent-blue)' }}>Built with:</strong> Electron,
-                  React, TypeScript, SQLite
-                </p>
-                <p className="text-sm my-2" style={{ color: 'var(--text-primary)' }}>
-                  <strong style={{ color: 'var(--accent-blue)' }}>Version:</strong> 2.0.0
-                  (Modernized)
-                </p>
-              </div>
             </div>
           )}
         </div>
