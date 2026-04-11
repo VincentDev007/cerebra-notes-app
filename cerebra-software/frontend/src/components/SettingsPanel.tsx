@@ -7,16 +7,15 @@ interface Props {
   onClose: () => void;
 }
 
-type Tab = 'general' | 'appearance' | 'about';
+type Tab = 'appearance' | 'about';
 
 const tabs: { id: Tab; label: string }[] = [
-  { id: 'general', label: 'General' },
   { id: 'appearance', label: 'Appearance' },
   { id: 'about', label: 'About' },
 ];
 
 export default function SettingsPanel({ settings, onUpdate, onClose }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>('general');
+  const [activeTab, setActiveTab] = useState<Tab>('appearance');
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -27,7 +26,6 @@ export default function SettingsPanel({ settings, onUpdate, onClose }: Props) {
   }, [onClose]);
 
   const appName = settings.appName || 'CEREBRA';
-  const confirmDelete = settings.confirmDelete !== 'false';
   const fontSize = settings.fontSize || 'medium';
   const animations = settings.animations !== 'false';
 
@@ -87,59 +85,6 @@ export default function SettingsPanel({ settings, onUpdate, onClose }: Props) {
         </div>
 
         <div className="p-8 overflow-y-auto" style={{ maxHeight: '500px' }}>
-          {activeTab === 'general' && (
-            <div>
-              <h3
-                className="text-xl font-semibold mb-6 pb-4 border-b-2"
-                style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
-              >
-                General Settings
-              </h3>
-
-              <div className="mb-6">
-                <label
-                  className="block text-sm font-semibold mb-2"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  Application Name:
-                </label>
-                <input
-                  className="w-full px-3 py-2.5 rounded-md border-2 text-sm outline-none transition-colors focus:border-blue-400"
-                  style={{
-                    borderColor: 'var(--border-color)',
-                    color: 'var(--text-primary)',
-                    background: 'var(--input-bg)',
-                  }}
-                  value={appName}
-                  maxLength={20}
-                  onChange={(e) => onUpdate('appName', e.target.value)}
-                />
-                <p className="text-xs italic mt-1.5" style={{ color: 'var(--text-light)' }}>
-                  Customize the name displayed in the sidebar
-                </p>
-              </div>
-
-              <div className="mb-6">
-                <label
-                  className="flex items-center gap-2.5 text-sm font-medium cursor-pointer"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  <input
-                    type="checkbox"
-                    className="w-4.5 h-4.5 cursor-pointer"
-                    style={{ accentColor: 'var(--accent-blue)', width: '18px', height: '18px' }}
-                    checked={confirmDelete}
-                    onChange={(e) => onUpdate('confirmDelete', String(e.target.checked))}
-                  />
-                  Confirm before deleting items
-                </label>
-                <p className="text-xs italic mt-1.5 ml-7" style={{ color: 'var(--text-light)' }}>
-                  Show confirmation dialog when deleting folders, notes, or sticky notes
-                </p>
-              </div>
-            </div>
-          )}
-
           {activeTab === 'appearance' && (
             <div>
               <h3
