@@ -4,7 +4,7 @@ All notable changes to Cerebra will be documented here.
 
 ## [Unreleased]
 
-## [0.5.0] - 2026-04-09
+## [0.5.0] - 2026-04-13
 ### Added
 - FTS5 full-text search across notes
 - Lucide icons replacing all emoji usage throughout the UI
@@ -29,6 +29,8 @@ All notable changes to Cerebra will be documented here.
 - `useFolders.remove` refetching entire folder list on delete
 - FTS5 parse errors returning a crash instead of empty results
 - Unused catch bindings across hooks and backend repositories
+- Removed General tab from settings (redundant)
+- Simplified About section in settings
 
 ## [0.1.0] - 2026-03-22
 ### Added
