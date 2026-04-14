@@ -3,7 +3,6 @@ import type { StickyNote } from '../types/electron';
 import {
   getStickyNotes,
   createStickyNote,
-  updateStickyNote,
   deleteStickyNote,
 } from '../services/stickyNoteService';
 
@@ -34,15 +33,10 @@ export function useStickyNotes() {
     if (newNote) setStickyNotes((prev) => [newNote, ...prev]);
   };
 
-  const update = async (id: number, input: { title?: string; content?: string }) => {
-    const updatedNote = await updateStickyNote(id, input);
-    if (updatedNote) setStickyNotes((prev) => prev.map((n) => (n.id === id ? updatedNote : n)));
-  };
-
   const remove = async (id: number) => {
     await deleteStickyNote(id);
     setStickyNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
-  return { stickyNotes, loading, error, create, update, remove };
+  return { stickyNotes, loading, error, create, remove };
 }

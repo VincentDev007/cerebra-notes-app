@@ -84,7 +84,7 @@ export const updateNote = (id: number, input: UpdateNoteInput): Note | undefined
 
     const now = new Date().toISOString();
     const title = input.title ? input.title.trim() : existing.title;
-    const content = input.content ?? existing.content;
+    const content = input.content != null ? input.content.trim() : existing.content;
 
     stmtUpdateNote.run(title, content, now, id);
 
@@ -119,7 +119,8 @@ export const searchNotes = (query: string): Note[] => {
     }
 
     try {
-      return stmtSearchNotes.all(query.trim()) as Note[];
+      const safe = `"${query.trim().replace(/"/g, '""')}"`;
+      return stmtSearchNotes.all(safe) as Note[];
     } catch (ftsError) {
       if (ftsError instanceof Error && ftsError.message.startsWith('fts5:')) {
         return [];

@@ -89,8 +89,8 @@ export const updateStickyNote = (
     if (!existing) return undefined;
 
     const now = new Date().toISOString();
-    const title = input.title?.trim() ?? existing.title.trim();
-    const content = input.content?.trim() ?? existing.content.trim();
+    const title = input.title?.trim() ?? existing.title;
+    const content = input.content != null ? input.content.trim() : existing.content;
 
     stmtUpdateStickyNote.run(title, content, now, id);
 
@@ -125,7 +125,8 @@ export const searchStickyNotes = (query: string): StickyNote[] => {
     }
 
     try {
-      return stmtSearchStickyNotes.all(query.trim()) as StickyNote[];
+      const safe = `"${query.trim().replace(/"/g, '""')}"`;
+      return stmtSearchStickyNotes.all(safe) as StickyNote[];
     } catch (ftsError) {
       if (ftsError instanceof Error && ftsError.message.startsWith('fts5:')) {
         return [];

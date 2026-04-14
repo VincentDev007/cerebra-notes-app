@@ -28,13 +28,6 @@ export default function NoteEditor({ note, folderName, onBack, onSave, onDelete 
   }, [note.id]);
 
   useEffect(() => {
-    if (!editing) {
-      setEditTitle(note.title);
-      setEditContent(note.content);
-    }
-  }, [note.title, note.content, editing]);
-
-  useEffect(() => {
     if (editing && textareaRef.current) {
       textareaRef.current.focus();
       const len = textareaRef.current.value.length;
@@ -73,129 +66,130 @@ export default function NoteEditor({ note, folderName, onBack, onSave, onDelete 
   };
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
+      {/* Top bar */}
       <div
-        className="flex justify-between items-start p-8 rounded-xl mb-5 transition-colors duration-300"
+        className="flex items-center justify-between px-6 py-3 mb-6 rounded-xl transition-colors duration-300"
         style={{ background: 'var(--bg-secondary)', boxShadow: 'var(--card-shadow-sm)' }}
       >
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <button
-              className="w-8 h-8 rounded-lg border flex items-center justify-center transition-colors hover:bg-gray-100"
-              style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
-              onClick={onBack}
-              title="Back to folder"
-            >
-              <ArrowLeft size={16} />
-            </button>
-            {editing ? (
-              <input
-                className="text-3xl font-bold outline-none border-b-2 px-1 bg-transparent transition-colors focus:border-blue-400"
-                style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-              />
-            ) : (
-              <h1
-                className="text-3xl font-bold flex items-center gap-2"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                <FileText size={28} style={{ color: 'var(--accent-blue)' }} /> {note.title}
-              </h1>
-            )}
-          </div>
-
-          <p
-            className="text-sm ml-11 flex items-center gap-1"
-            style={{ color: 'var(--text-secondary)' }}
+        <div className="flex items-center gap-3">
+          <button
+            className="w-8 h-8 rounded-lg border flex items-center justify-center transition-colors hover:bg-gray-100"
+            style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
+            onClick={onBack}
+            title="Back to folder"
           >
-            <Folder size={12} /> {folderName} &middot; Created {formatDate(note.created_at)}{' '}
-            &middot; Modified {formatDate(note.modified_at)}
-          </p>
+            <ArrowLeft size={16} />
+          </button>
+          <div className="flex items-center gap-1.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <Folder size={13} />
+            <span>{folderName}</span>
+            <span className="mx-1" style={{ color: 'var(--border-color)' }}>/</span>
+            <FileText size={13} />
+            <span>{note.title}</span>
+          </div>
         </div>
 
         <div className="flex gap-2">
           {editing ? (
             <>
               <button
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:-translate-y-px"
+                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:-translate-y-px"
                 style={{ background: 'var(--accent-green)' }}
                 onClick={handleSave}
               >
-                <Save size={14} /> Save
+                <Save size={13} /> Save
               </button>
               <button
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-px hover:bg-gray-100"
+                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:-translate-y-px hover:bg-gray-100"
                 style={{ color: 'var(--text-secondary)' }}
                 onClick={handleCancel}
               >
-                <X size={14} /> Cancel
+                <X size={13} /> Cancel
               </button>
             </>
           ) : (
             <>
               <button
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:-translate-y-px"
+                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:-translate-y-px"
                 style={{ background: 'var(--accent-blue)' }}
                 onClick={enterEditMode}
               >
-                <Pencil size={14} /> Edit
+                <Pencil size={13} /> Edit
               </button>
               <button
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:-translate-y-px"
+                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:-translate-y-px"
                 style={{ background: 'var(--accent-red)' }}
                 onClick={() => setShowDeleteConfirm(true)}
               >
-                <Trash2 size={14} /> Delete
+                <Trash2 size={13} /> Delete
               </button>
             </>
           )}
         </div>
       </div>
 
+      {/* Document area */}
       <div
-        className="rounded-xl p-8 transition-colors duration-300"
-        style={{
-          background: 'var(--bg-secondary)',
-          minHeight: '400px',
-          boxShadow: 'var(--card-shadow-sm)',
-        }}
+        className="flex-1 rounded-xl px-12 py-10 transition-colors duration-300"
+        style={{ background: 'var(--bg-secondary)', boxShadow: 'var(--card-shadow-sm)' }}
       >
-        {editing ? (
-          <textarea
-            ref={textareaRef}
-            className="w-full outline-none resize-y text-base leading-relaxed bg-transparent"
-            style={{
-              color: 'var(--text-primary)',
-              minHeight: '400px',
-              fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-            }}
-            placeholder="Write your note content here..."
-            value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-          />
-        ) : note.content ? (
-          <p
-            className="text-base leading-relaxed"
-            style={{ color: 'var(--text-primary)', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}
-          >
-            {note.content}
-          </p>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <FileText
-              size={48}
-              className="mb-4 opacity-50"
-              style={{ color: 'var(--text-secondary)' }}
+        <div className="max-w-3xl mx-auto">
+          {/* Title */}
+          {editing ? (
+            <input
+              className="w-full text-3xl font-bold outline-none bg-transparent border-b-2 pb-2 mb-3 transition-colors focus:border-blue-400"
+              style={{ color: 'var(--text-primary)', borderColor: 'var(--border-color)' }}
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
             />
-            <h4 className="text-lg font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>
-              This note is empty
-            </h4>
-            <p className="text-sm" style={{ color: 'var(--text-light)' }}>
-              Click Edit to add content
+          ) : (
+            <h1 className="text-3xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
+              {note.title}
+            </h1>
+          )}
+
+          {/* Metadata */}
+          <p className="text-xs mb-8" style={{ color: 'var(--text-light)' }}>
+            Created {formatDate(note.created_at)} &middot; Modified {formatDate(note.modified_at)}
+          </p>
+
+          <div className="h-px mb-8" style={{ background: 'var(--border-color)' }} />
+
+          {/* Content */}
+          {editing ? (
+            <textarea
+              ref={textareaRef}
+              className="w-full outline-none resize-none bg-transparent text-base leading-relaxed"
+              style={{
+                color: 'var(--text-primary)',
+                minHeight: '320px',
+                fontFamily: 'inherit',
+              }}
+              placeholder="Write your note content here..."
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+            />
+          ) : note.content ? (
+            <p
+              className="text-base leading-relaxed"
+              style={{ color: 'var(--text-primary)', whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}
+            >
+              {note.content}
             </p>
-          </div>
-        )}
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <FileText
+                size={40}
+                className="mb-3 opacity-30"
+                style={{ color: 'var(--text-secondary)' }}
+              />
+              <p className="text-sm" style={{ color: 'var(--text-light)' }}>
+                This note is empty — click Edit to add content
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {showDeleteConfirm && (

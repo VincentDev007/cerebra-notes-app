@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import {
   Folder,
   Pin,
@@ -105,10 +105,24 @@ export default function App() {
     }
   }, [openTabs.length, activeTabIndex]);
 
+  const navigateBack = (folder: FolderType | null) => {
+    setOpenTabs((prev) => prev.map((t, i) => (i === activeTabIndex ? folder : t)));
+  };
+
+  const navigateForward = (folder: FolderType) => {
+    setOpenTabs((prev) => prev.map((t, i) => (i === activeTabIndex ? folder : t)));
+  };
+
   const navigateTo = (folder: FolderType | null) => {
     if (folder === null) {
       const homeIndex = openTabs.indexOf(null);
-      if (homeIndex >= 0) setActiveTabIndex(homeIndex);
+      if (homeIndex >= 0) {
+        setActiveTabIndex(homeIndex);
+      } else {
+        const newIndex = openTabs.length;
+        setOpenTabs((prev) => [...prev, null]);
+        setActiveTabIndex(newIndex);
+      }
       return;
     }
     const existingIndex = openTabs.findIndex((t) => t !== null && t.id === folder.id);
@@ -143,6 +157,13 @@ export default function App() {
       document.body.classList.remove('no-animations');
     }
   }, [settings.fontSize, settings.animations]);
+
+  const handleNoteSave = useCallback(
+    async (id: number, input: { title?: string; content?: string }) => {
+      await updateNote(id, input);
+    },
+    [updateNote]
+  );
 
   const rootFolders = folders.filter((f) => f.parent_id === null);
   const subfolders = selectedFolder ? folders.filter((f) => f.parent_id === selectedFolder.id) : [];
@@ -509,9 +530,7 @@ export default function App() {
               note={selectedNote}
               folderName={selectedFolder.name}
               onBack={() => setSelectedNoteId(null)}
-              onSave={async (id, input) => {
-                await updateNote(id, input);
-              }}
+              onSave={handleNoteSave}
               onDelete={async (id) => {
                 await removeNote(id);
                 setSelectedNoteId(null);
@@ -523,7 +542,14 @@ export default function App() {
               notes={notes}
               subfolders={subfolders}
               itemCounts={itemCounts}
-              onBack={() => navigateTo(null)}
+              onBack={() => {
+                if (selectedFolder?.parent_id != null) {
+                  const parent = folders.find((f) => f.id === selectedFolder.parent_id);
+                  navigateBack(parent ?? null);
+                } else {
+                  navigateBack(null);
+                }
+              }}
               onNoteClick={(note: Note) => setSelectedNoteId(note.id)}
               onNoteDelete={async (id) => {
                 if (confirmDelete) {
@@ -537,7 +563,7 @@ export default function App() {
                 setCreateFolderParentId(selectedFolder!.id);
                 setShowCreateFolder(true);
               }}
-              onSubfolderSelect={navigateTo}
+              onSubfolderSelect={navigateForward}
               onSubfolderEdit={setEditingFolder}
               onSubfolderDelete={async (id) => {
                 if (confirmDelete) {

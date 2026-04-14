@@ -88,6 +88,19 @@ export const initializeDatabase = (): void => {
 
     if (isDatabaseInitialized()) {
       console.log('✓ Database already initialized');
+      // Recreate update triggers in case they exist with the old (broken) UPDATE syntax
+      db.exec(`
+        DROP TRIGGER IF EXISTS notes_fts_update;
+        DROP TRIGGER IF EXISTS sticky_notes_fts_update;
+        CREATE TRIGGER notes_fts_update AFTER UPDATE ON notes BEGIN
+          INSERT INTO notes_fts(notes_fts, rowid, title, content) VALUES('delete', old.id, old.title, old.content);
+          INSERT INTO notes_fts(rowid, title, content) VALUES(new.id, new.title, new.content);
+        END;
+        CREATE TRIGGER sticky_notes_fts_update AFTER UPDATE ON sticky_notes BEGIN
+          INSERT INTO sticky_notes_fts(sticky_notes_fts, rowid, title, content) VALUES('delete', old.id, old.title, old.content);
+          INSERT INTO sticky_notes_fts(rowid, title, content) VALUES(new.id, new.title, new.content);
+        END;
+      `);
       return;
     }
 

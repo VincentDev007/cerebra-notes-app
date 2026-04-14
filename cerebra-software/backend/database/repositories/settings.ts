@@ -26,6 +26,10 @@ const loadCache = (): Record<string, string> => {
   return cache;
 };
 
+export const invalidateSettingsCache = (): void => {
+  cache = null;
+};
+
 export const getSetting = (key: string): string | null => {
   try {
     if (!key || !key.trim()) {
@@ -73,7 +77,7 @@ export const setSetting = (key: string, value: string): void => {
 
 export const getAllSettings = (): Record<string, string> => {
   try {
-    return loadCache();
+    return { ...loadCache() };
   } catch (error) {
     console.error('Error fetching all settings:', error);
     throw error;

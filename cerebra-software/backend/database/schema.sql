@@ -60,7 +60,8 @@ CREATE TRIGGER IF NOT EXISTS notes_fts_insert AFTER INSERT ON notes BEGIN
 END;
 
 CREATE TRIGGER IF NOT EXISTS notes_fts_update AFTER UPDATE ON notes BEGIN
-  UPDATE notes_fts SET title = new.title, content = new.content WHERE rowid = old.id;
+  INSERT INTO notes_fts(notes_fts, rowid, title, content) VALUES('delete', old.id, old.title, old.content);
+  INSERT INTO notes_fts(rowid, title, content) VALUES(new.id, new.title, new.content);
 END;
 
 CREATE TRIGGER IF NOT EXISTS notes_fts_delete AFTER DELETE ON notes BEGIN
@@ -73,7 +74,8 @@ CREATE TRIGGER IF NOT EXISTS sticky_notes_fts_insert AFTER INSERT ON sticky_note
 END;
 
 CREATE TRIGGER IF NOT EXISTS sticky_notes_fts_update AFTER UPDATE ON sticky_notes BEGIN
-  UPDATE sticky_notes_fts SET title = new.title, content = new.content WHERE rowid = old.id;
+  INSERT INTO sticky_notes_fts(sticky_notes_fts, rowid, title, content) VALUES('delete', old.id, old.title, old.content);
+  INSERT INTO sticky_notes_fts(rowid, title, content) VALUES(new.id, new.title, new.content);
 END;
 
 CREATE TRIGGER IF NOT EXISTS sticky_notes_fts_delete AFTER DELETE ON sticky_notes BEGIN

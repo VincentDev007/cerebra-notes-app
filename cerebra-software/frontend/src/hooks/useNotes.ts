@@ -5,7 +5,6 @@ import {
   createNote,
   updateNote,
   deleteNote,
-  searchNotes,
 } from '../services/noteService';
 
 export function useNotes(folderId: number | null) {
@@ -50,9 +49,5 @@ export function useNotes(folderId: number | null) {
     setNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
-  const search = async (query: string): Promise<Note[]> => {
-    return searchNotes(query);
-  };
-
-  return { notes, loading, error, create, update, remove, search };
+  return { notes, loading, error, create, update, remove };
 }
