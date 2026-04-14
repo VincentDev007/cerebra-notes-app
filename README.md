@@ -5,7 +5,7 @@
 
 A local-first note taking app built with Electron.
 
-> macOS only. Windows and Linux support is not planned for this release.
+> macOS only (12 Monterey or later). Windows and Linux support is not planned for this release.
 
 ## Features
 - Notes and folders
