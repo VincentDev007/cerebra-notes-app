@@ -156,7 +156,7 @@ export default function SettingsPanel({ settings, onUpdate, onClose }: Props) {
                 className="inline-block text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-5"
                 style={{ background: 'var(--accent-blue)' }}
               >
-                Version 0.5.1
+                Version 0.5.0
               </span>
 
               <p
