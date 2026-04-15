@@ -1,6 +1,6 @@
 {
   "name": "cerebra-software",
-  "version": "0.5.1",
+  "version": "0.5.0",
   "description": "A local-first note-taking app with folders, sticky notes, and full-text search.",
   "main": "dist/electron/electron/main.js",
   "scripts": {
