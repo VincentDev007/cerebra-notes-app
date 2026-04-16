@@ -16,7 +16,7 @@ A local-first note taking app built with Electron.
 - Settings
 
 ## Download
-Get the latest release [here](https://github.com/your-username/cerebra/releases).
+Get the latest release [here](https://github.com/VincentDev007/cerebra-notes-app/releases/tag/v0.5.0).
 
 ## Running from Source
 1. Clone the repo
