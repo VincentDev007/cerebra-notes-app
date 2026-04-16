@@ -3,7 +3,7 @@
 ![version](https://img.shields.io/badge/version-0.5.0-blue)
 ![platform](https://img.shields.io/badge/platform-macOS-lightgrey?logo=apple)
 
-A local-first note taking app built with Electron.
+Desktop notes app with full-text search and sticky notes.
 
 > macOS only (12 Monterey or later). Windows and Linux support is not planned for this release.
 

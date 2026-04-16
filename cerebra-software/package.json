@@ -1,7 +1,7 @@
 {
   "name": "cerebra-software",
   "version": "0.5.0",
-  "description": "A local-first note-taking app with folders, sticky notes, and full-text search.",
+  "description": "Desktop notes app with full-text search and sticky notes.",
   "main": "dist/electron/electron/main.js",
   "scripts": {
     "dev": "npm run build:backend && concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
