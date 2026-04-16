@@ -1,0 +1,39 @@
+# Dependencies
+cerebra-software/node_modules/
+
+# Build outputs
+cerebra-software/dist
+release/
+
+# Environment files
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Database
+*.db
+*.sqlite
+
+
+
+
+
+
+
+
+
+
+
